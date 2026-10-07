@@ -1,8 +1,7 @@
 # Task 1 — Descriptive statistics and probability
 
 The authoritative assignment is [task1-description.pdf](task1-description.pdf).
-This directory covers all three problems in that PDF; notebooks are scaffolds,
-not completed solutions.
+This directory contains solutions to all three problems in that PDF.
 
 1. `task1-problem1-ceosal1.ipynb`: CEO salaries, descriptive statistics,
    correlations, age groups, and contingency tables.
@@ -29,4 +28,4 @@ it must not be interpreted as observed CEO ages.
   price adjustment choice, and handling of incomplete weeks. Cache the data.
 
 Before submission, restart each kernel, run all cells, save outputs, and
-replace every TODO with code or interpretation.
+check that all answers and outputs are present.
