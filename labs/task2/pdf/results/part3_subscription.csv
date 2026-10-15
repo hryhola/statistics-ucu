@@ -1,0 +1,2 @@
+n,successes,share,expected_successes_null,expected_failures_null,z,critical,p,reject
+250,34,0.136,25.0,225.0,1.897366596101028,1.644853626951472,0.02888978556179858,True

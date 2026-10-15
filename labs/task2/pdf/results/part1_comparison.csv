@@ -1,0 +1,4 @@
+quantity,theoretical,simulation
+E(mean),10.0,10.134968650035052
+Var(mean),12.5,13.080443673850997
+E(sample variance),50.0,50.980956313501565

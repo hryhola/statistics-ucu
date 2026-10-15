@@ -1,0 +1,31 @@
+{
+  "purpose": "Independent verification of calibration; required assignment results are unchanged",
+  "versions": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "statsmodels": "0.15.0"
+  },
+  "installed_source_files": {
+    "lilliefors": "/Users/vladhryhola/UCU/Statistics/.venv/lib/python3.14/site-packages/statsmodels/stats/_lilliefors.py",
+    "table_critical_value_interpolation": "/Users/vladhryhola/UCU/Statistics/.venv/lib/python3.14/site-packages/statsmodels/stats/tabledist.py"
+  },
+  "method": "N(0,1) samples; independent fitted-normal KS statistic with ddof=1; reject above the installed table's alpha=0.05 critical value",
+  "seed": 20261014,
+  "n": 80,
+  "replications": 200000,
+  "batch_size": 10000,
+  "nominal_alpha": 0.05,
+  "critical_n50": 0.12444044000000001,
+  "critical_n80": 0.10317672200000001,
+  "critical_n100": 0.08900091000000002,
+  "linear_interpolation_verified": true,
+  "library_statistic_and_decision_checks": 100,
+  "rejections": 6957,
+  "estimated_actual_size": 0.034785,
+  "mc_standard_error": 0.00040972554091123003,
+  "exact_binomial_95_percent_interval": [
+    0.033986200887847304,
+    0.035597319299996925
+  ],
+  "empirical_D_95th_percentile": 0.0991622747037968
+}

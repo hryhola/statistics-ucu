@@ -1,0 +1,8 @@
+SHAPE = 2
+SCALE = 5
+TRUE_MEAN = 10
+TRUE_VARIANCE = 50
+SAMPLE_SIZES = 5 ** np.arange(1, 9)  # 5¹ through 5⁸, not 51 through 58
+REPLICATIONS = 1000
+SMALL_N = 4
+LARGE_N = 100

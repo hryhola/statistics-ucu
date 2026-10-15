@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "location": ".",
+      "notebook_setups_passed": 5
+    },
+    {
+      "location": "labs/task2",
+      "notebook_setups_passed": 5
+    },
+    {
+      "location": "labs/task2/notebooks",
+      "notebook_setups_passed": 5
+    },
+    {
+      "location": "copied task2/notebooks without assignment PDF",
+      "notebook_setups_passed": 5
+    }
+  ],
+  "total_setup_checks": 20,
+  "statistical_cells": "All required cells separately rerun in fresh kernels from notebooks/ using run_notebooks.py.",
+  "layout": {
+    "input": "input/",
+    "working_notebooks": "notebooks/",
+    "generated_files": "pdf/"
+  }
+}

@@ -1,0 +1,832 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Keep aspect ratio if custom image width or height is specified
+    \setkeys{Gin}{keepaspectratio}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \setmainfont{STIX Two Text}
+        \setsansfont{PT Sans}
+        \setmonofont{Menlo}[Scale=0.85]
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \makeatletter
+    \newsavebox\pandoc@box
+    \newcommand*\pandocbounded[1]{%
+      \sbox\pandoc@box{#1}%
+      % scaling factors for width and height
+      \Gscale@div\@tempa\textheight{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+      \Gscale@div\@tempb\linewidth{\wd\pandoc@box}%
+      % select the smaller of both
+      \ifdim\@tempb\p@<\@tempa\p@
+        \let\@tempa\@tempb
+      \fi
+      % scaling accordingly (\@tempa < 1)
+      \ifdim\@tempa\p@<\p@
+        \scalebox{\@tempa}{\usebox\pandoc@box}%
+      % scaling not needed, use as it is
+      \else
+        \usebox{\pandoc@box}%
+      \fi
+    }
+    \makeatother
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@ges}{\let\PY@bf=\textbf\let\PY@it=\textit}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \section{Task 2 · Problem 4 · Part 3 --- Product-metric hypothesis
+tests}\label{task-2-problem-4-part-3-product-metric-hypothesis-tests}
+
+Use α = 0.05 for every test. Fill out each written-result template. For
+3(e), use the built-in statsmodels test without manual statistic
+calculations.
+
+Source: \href{../../../input/assignment_2.pdf}{assignment\_2.pdf}. Розв'язання
+та висновки наведено нижче українською мовою.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{pathlib}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{Path}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{numpy}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{np}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{pandas}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{pd}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{plt}
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{seaborn}\PY{+w}{ }\PY{k}{as}\PY{+w}{ }\PY{n+nn}{sns}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{scipy}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{stats}
+
+\PY{n}{TASK\PYZus{}DIR} \PY{o}{=} \PY{n}{Path}\PY{o}{.}\PY{n}{cwd}\PY{p}{(}\PY{p}{)}
+\PY{k}{if} \PY{p}{(}\PY{n}{TASK\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{labs}\PY{l+s+s2}{\PYZdq{}} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{task2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{is\PYZus{}dir}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{TASK\PYZus{}DIR} \PY{o}{=} \PY{n}{TASK\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{labs}\PY{l+s+s2}{\PYZdq{}} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{task2}\PY{l+s+s2}{\PYZdq{}}
+\PY{k}{elif} \PY{n}{TASK\PYZus{}DIR}\PY{o}{.}\PY{n}{name} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{notebooks}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+    \PY{n}{TASK\PYZus{}DIR} \PY{o}{=} \PY{n}{TASK\PYZus{}DIR}\PY{o}{.}\PY{n}{parent}
+\PY{n}{INPUT\PYZus{}DIR} \PY{o}{=} \PY{n}{TASK\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{input}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{PDF\PYZus{}DIR} \PY{o}{=} \PY{n}{TASK\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{pdf}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{FIGURES\PYZus{}DIR} \PY{o}{=} \PY{n}{PDF\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{figures}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{SEED} \PY{o}{=} \PY{l+m+mi}{42}
+\PY{n}{ALPHA} \PY{o}{=} \PY{l+m+mf}{0.05}
+\PY{n}{rng} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{default\PYZus{}rng}\PY{p}{(}\PY{n}{SEED}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{set\PYZus{}theme}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{whitegrid}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{FIGURES\PYZus{}DIR}\PY{o}{.}\PY{n}{mkdir}\PY{p}{(}\PY{n}{parents}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{exist\PYZus{}ok}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{RESULTS\PYZus{}DIR} \PY{o}{=} \PY{n}{PDF\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{results}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{RESULTS\PYZus{}DIR}\PY{o}{.}\PY{n}{mkdir}\PY{p}{(}\PY{n}{exist\PYZus{}ok}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{rcParams}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{figure.dpi}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{120}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{savefig.bbox}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{tight}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{)}
+
+\PY{n}{pd}\PY{o}{.}\PY{n}{set\PYZus{}option}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{display.float\PYZus{}format}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}:.6g\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{o}{.}\PY{n}{format}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Source: the app\PYZus{}metrics.csv supplied alongside assignment\PYZus{}2.pdf.}
+\PY{c+c1}{\PYZsh{} Keep the source file unchanged; no external download is required.}
+\PY{n}{DATA\PYZus{}PATH} \PY{o}{=} \PY{n}{INPUT\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{app\PYZus{}metrics.csv}\PY{l+s+s2}{\PYZdq{}}
+\PY{k}{if} \PY{o+ow}{not} \PY{n}{DATA\PYZus{}PATH}\PY{o}{.}\PY{n}{is\PYZus{}file}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{raise} \PY{n+ne}{FileNotFoundError}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Place the supplied app\PYZus{}metrics.csv at }\PY{l+s+si}{\PYZob{}}\PY{n}{DATA\PYZus{}PATH}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{DATA\PYZus{}PATH}\PY{p}{)}
+\PY{n}{required} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Platform}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Session\PYZus{}Time}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Registration\PYZus{}Success}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Page\PYZus{}Views}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Purchase\PYZus{}Amount}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Revenue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Subscription}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}
+\PY{n}{missing} \PY{o}{=} \PY{n}{required}\PY{o}{.}\PY{n}{difference}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{k}{if} \PY{n}{missing}\PY{p}{:}
+    \PY{k}{raise} \PY{n+ne}{ValueError}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Missing required columns: }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{sorted}\PY{p}{(}\PY{n}{missing}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Registration\PYZus{}Success}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Subscription}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n}{df}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{isin}\PY{p}{(}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{all}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{k}{raise} \PY{n+ne}{ValueError}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{column}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ must contain binary values 0 or 1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Review missing values before choosing a per\PYZhy{}analysis handling policy.}
+\PY{n}{display}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{isna}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{missing}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{diagnostic}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{lilliefors}
+\PY{k+kn}{from}\PY{+w}{ }\PY{n+nn}{statsmodels}\PY{n+nn}{.}\PY{n+nn}{stats}\PY{n+nn}{.}\PY{n+nn}{proportion}\PY{+w}{ }\PY{k+kn}{import} \PY{n}{proportions\PYZus{}ztest}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+   User\_ID Platform  Session\_Time  Registration\_Success  Page\_Views  \textbackslash{}
+0     1001  Android         14.04                     0          12   
+1     1002  Android          9.24                     0           7   
+2     1003      iOS         17.76                     0          13   
+3     1004      iOS         16.13                     0           4   
+4     1005  Android         23.45                     1          12   
+
+   Purchase\_Amount  Revenue  Subscription  
+0            510.9   376.11             0  
+1           390.84   467.01             0  
+2           640.27   228.87             0  
+3           238.35   420.25             0  
+4           582.25   576.61             0  
+    \end{Verbatim}
+
+    
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+User\_ID                 0
+Platform                0
+Session\_Time            0
+Registration\_Success    0
+Page\_Views              0
+Purchase\_Amount         0
+Revenue                 0
+Subscription            0
+Name: missing, dtype: int64
+    \end{Verbatim}
+
+    
+    \subsection{3(a) --- Session time}\label{a-session-time}
+
+Test the claim that the population mean Session\_Time exceeds 15 minutes
+using an appropriate one-sided parametric test.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{session} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Session\PYZus{}Time}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
+\PY{n}{n\PYZus{}session} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{session}\PY{p}{)}
+\PY{n}{session\PYZus{}mean}\PY{p}{,} \PY{n}{session\PYZus{}sd} \PY{o}{=} \PY{n}{session}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{session}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{n}{ddof}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{t\PYZus{}session} \PY{o}{=} \PY{p}{(}\PY{n}{session\PYZus{}mean} \PY{o}{\PYZhy{}} \PY{l+m+mi}{15}\PY{p}{)} \PY{o}{/} \PY{p}{(}\PY{n}{session\PYZus{}sd} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{n\PYZus{}session}\PY{p}{)}\PY{p}{)}
+\PY{n}{session\PYZus{}df} \PY{o}{=} \PY{n}{n\PYZus{}session} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
+\PY{n}{session\PYZus{}critical} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{t}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{ALPHA}\PY{p}{,} \PY{n}{session\PYZus{}df}\PY{p}{)}
+\PY{n}{session\PYZus{}test} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{ttest\PYZus{}1samp}\PY{p}{(}\PY{n}{session}\PY{p}{,} \PY{n}{popmean}\PY{o}{=}\PY{l+m+mi}{15}\PY{p}{,} \PY{n}{alternative}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{greater}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{isclose}\PY{p}{(}\PY{n}{t\PYZus{}session}\PY{p}{,} \PY{n}{session\PYZus{}test}\PY{o}{.}\PY{n}{statistic}\PY{p}{)}
+\PY{n}{session\PYZus{}results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}session}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{session\PYZus{}mean}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sd}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{session\PYZus{}sd}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{t\PYZus{}session}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{df}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{session\PYZus{}df}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{critical}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{session\PYZus{}critical}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{session\PYZus{}test}\PY{o}{.}\PY{n}{pvalue}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{reject}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{session\PYZus{}test}\PY{o}{.}\PY{n}{pvalue} \PY{o}{\PYZlt{}} \PY{n}{ALPHA}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{session\PYZus{}results}\PY{p}{)}
+\PY{n}{session\PYZus{}results}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{n}{RESULTS\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{part3\PYZus{}session.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     n    mean      sd       t   df  critical           p  reject
+0  250 16.5201 5.00082 4.80626  249     1.651 1.33058e-06    True
+    \end{Verbatim}
+
+    
+    \textbf{\emph{Answer}}
+
+\textbf{Гіпотези:} \(H_0:\mu\le15\) проти \(H_1:\mu>15\); статистику
+обчислюємо на межі \(\mu_0=15\). Дані містять \(n=250\) значень без
+пропусків. Припускаємо незалежну репрезентативну вибірку зі скінченною
+дисперсією. Точний t-критерій вимагає нормальності; при великому \(n\)
+використовуємо наближення для середнього.
+
+\textbf{Статистика та критична область:}
+\[t=\frac{\bar x-15}{s/\sqrt n}=\frac{16.52012-15}{5.000818/\sqrt{250}}=4.806255,\qquad df=249.\]
+Відхиляємо \(H_0\), якщо \(t>t_{0.95,249}=1.650996\).
+
+\textbf{Результат:} \(p=1.3306\times 10^{-6}<0.05\), тому \(H_0\)
+відхиляємо. Є статистичні підстави вважати, що середній час сесії
+перевищує 15 хвилин. У вибірці середній час дорівнює 16.52012 хв, тобто
+приблизно на 1.52 хв більше за поріг. Висновок стосується середнього, а
+не кожного користувача, і спирається на припущення щодо вибірки.
+
+    \subsection{3(b) --- Revenue across
+platforms}\label{b-revenue-across-platforms}
+
+Use a two-sided Welch t-test to compare mean Revenue between iOS and
+Android users, with unknown and potentially unequal population
+variances.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{ios} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Platform}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{iOS}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Revenue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
+\PY{n}{android} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Platform}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Android}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Revenue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
+\PY{n}{n\PYZus{}ios}\PY{p}{,} \PY{n}{n\PYZus{}android} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{ios}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{android}\PY{p}{)}
+\PY{n}{mean\PYZus{}ios}\PY{p}{,} \PY{n}{mean\PYZus{}android} \PY{o}{=} \PY{n}{ios}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{android}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{var\PYZus{}ios}\PY{p}{,} \PY{n}{var\PYZus{}android} \PY{o}{=} \PY{n}{ios}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{n}{ddof}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{android}\PY{o}{.}\PY{n}{var}\PY{p}{(}\PY{n}{ddof}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{v\PYZus{}ios}\PY{p}{,} \PY{n}{v\PYZus{}android} \PY{o}{=} \PY{n}{var\PYZus{}ios} \PY{o}{/} \PY{n}{n\PYZus{}ios}\PY{p}{,} \PY{n}{var\PYZus{}android} \PY{o}{/} \PY{n}{n\PYZus{}android}
+\PY{n}{welch\PYZus{}se} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{v\PYZus{}ios} \PY{o}{+} \PY{n}{v\PYZus{}android}\PY{p}{)}
+\PY{n}{t\PYZus{}welch} \PY{o}{=} \PY{p}{(}\PY{n}{mean\PYZus{}ios} \PY{o}{\PYZhy{}} \PY{n}{mean\PYZus{}android}\PY{p}{)} \PY{o}{/} \PY{n}{welch\PYZus{}se}
+\PY{n}{welch\PYZus{}df} \PY{o}{=} \PY{p}{(}\PY{n}{v\PYZus{}ios} \PY{o}{+} \PY{n}{v\PYZus{}android}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{/} \PY{p}{(}\PY{n}{v\PYZus{}ios}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{/} \PY{p}{(}\PY{n}{n\PYZus{}ios} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)} \PY{o}{+} \PY{n}{v\PYZus{}android}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2} \PY{o}{/} \PY{p}{(}\PY{n}{n\PYZus{}android} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}
+\PY{n}{welch\PYZus{}critical} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{t}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{ALPHA} \PY{o}{/} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{welch\PYZus{}df}\PY{p}{)}
+\PY{n}{welch\PYZus{}test} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{ttest\PYZus{}ind}\PY{p}{(}\PY{n}{ios}\PY{p}{,} \PY{n}{android}\PY{p}{,} \PY{n}{equal\PYZus{}var}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{alternative}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{two\PYZhy{}sided}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{isclose}\PY{p}{(}\PY{n}{t\PYZus{}welch}\PY{p}{,} \PY{n}{welch\PYZus{}test}\PY{o}{.}\PY{n}{statistic}\PY{p}{)}
+\PY{n}{welch\PYZus{}results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n\PYZus{}ios}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}ios}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n\PYZus{}android}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}android}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}ios}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{mean\PYZus{}ios}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}android}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{mean\PYZus{}android}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{var\PYZus{}ios}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{var\PYZus{}ios}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{var\PYZus{}android}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{var\PYZus{}android}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{t\PYZus{}welch}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{df}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{welch\PYZus{}df}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{critical}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{welch\PYZus{}critical}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{welch\PYZus{}test}\PY{o}{.}\PY{n}{pvalue}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{reject}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{welch\PYZus{}test}\PY{o}{.}\PY{n}{pvalue} \PY{o}{\PYZlt{}} \PY{n}{ALPHA}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{welch\PYZus{}results}\PY{o}{.}\PY{n}{T}\PY{p}{)}
+\PY{n}{welch\PYZus{}results}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{n}{RESULTS\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{part3\PYZus{}welch.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                       0
+n\_ios                110
+n\_android            140
+mean\_ios         500.922
+mean\_android     393.508
+var\_ios          65010.5
+var\_android      17623.8
+t                4.01175
+df               154.869
+critical          1.9754
+p            9.35453e-05
+reject              True
+    \end{Verbatim}
+
+    
+    \textbf{\emph{Answer}}
+
+\textbf{Гіпотези:} \(H_0:\mu_I=\mu_A\), \(H_1:\mu_I\ne\mu_A\), де \(I\)
+позначає iOS, \(A\) - Android. Використано 110 та 140 спостережень
+відповідно, пропусків немає. Припускаємо незалежність користувачів і
+груп та скінченні дисперсії; рівності дисперсій не вимагаємо. Для
+ненормальних сукупностей висновок є наближеним; обидві групи досить
+великі для застосування ЦГТ за цих умов.
+
+\textbf{Статистика Уелша:}
+\[t=\frac{\bar x_I-\bar x_A}{\sqrt{s_I^2/n_I+s_A^2/n_A}}
+=\frac{500.9221-393.5084}{\sqrt{65010.5061/110+17623.7712/140}}=4.011751.\]
+Число ступенів свободи оцінено за формулою
+\[\nu=\frac{(s_I^2/n_I+s_A^2/n_A)^2}{(s_I^2/n_I)^2/(n_I-1)+(s_A^2/n_A)^2/(n_A-1)}=154.869447.\]
+Відхиляємо \(H_0\), якщо \(|t|>t_{0.975,\nu}=1.975400\).
+
+\textbf{Результат:} \(p=9.3545\times 10^{-5}<0.05\), тому \(H_0\)
+відхиляємо. Дані свідчать про відмінність середнього Revenue між
+платформами. Середнє iOS вище приблизно на 107.41 грошових одиниць.
+Валюту в умові не вказано. Цей зв'язок не доводить, що саме платформа
+спричиняє різницю: групи можуть відрізнятися складом користувачів.
+Перевірка нормальності сукупного Revenue у пункті 3(д) не є окремою
+перевіркою нормальності кожної групи.
+
+    \subsection{3(c) --- Linear correlation}\label{c-linear-correlation}
+
+Test zero population Pearson correlation between Page\_Views and
+Purchase\_Amount. Keep observations paired when handling missing values;
+distinguish zero linear correlation from independence.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{paired} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Page\PYZus{}Views}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Purchase\PYZus{}Amount}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
+\PY{n}{n\PYZus{}pairs} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{paired}\PY{p}{)}
+\PY{n}{x}\PY{p}{,} \PY{n}{y} \PY{o}{=} \PY{n}{paired}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Page\PYZus{}Views}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{paired}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Purchase\PYZus{}Amount}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{dx}\PY{p}{,} \PY{n}{dy} \PY{o}{=} \PY{n}{x} \PY{o}{\PYZhy{}} \PY{n}{x}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{y}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}
+\PY{n}{sum\PYZus{}xy}\PY{p}{,} \PY{n}{sum\PYZus{}xx}\PY{p}{,} \PY{n}{sum\PYZus{}yy} \PY{o}{=} \PY{p}{(}\PY{n}{dx} \PY{o}{*} \PY{n}{dy}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{n}{dx}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{n}{dy}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\PY{n}{r} \PY{o}{=} \PY{n}{sum\PYZus{}xy} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{sum\PYZus{}xx} \PY{o}{*} \PY{n}{sum\PYZus{}yy}\PY{p}{)}
+\PY{n}{t\PYZus{}correlation} \PY{o}{=} \PY{n}{r} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{p}{(}\PY{n}{n\PYZus{}pairs} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{r}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{)}\PY{p}{)}
+\PY{n}{correlation\PYZus{}critical} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{t}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{ALPHA} \PY{o}{/} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{n\PYZus{}pairs} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{correlation\PYZus{}test} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{pearsonr}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{)}
+\PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{isclose}\PY{p}{(}\PY{n}{r}\PY{p}{,} \PY{n}{correlation\PYZus{}test}\PY{o}{.}\PY{n}{statistic}\PY{p}{)}
+\PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{isclose}\PY{p}{(}\PY{l+m+mi}{2} \PY{o}{*} \PY{n}{stats}\PY{o}{.}\PY{n}{t}\PY{o}{.}\PY{n}{sf}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{t\PYZus{}correlation}\PY{p}{)}\PY{p}{,} \PY{n}{n\PYZus{}pairs} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2}\PY{p}{)}\PY{p}{,} \PY{n}{correlation\PYZus{}test}\PY{o}{.}\PY{n}{pvalue}\PY{p}{)}
+\PY{n}{correlation\PYZus{}results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}pairs}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sum\PYZus{}xy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{sum\PYZus{}xy}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sum\PYZus{}xx}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{sum\PYZus{}xx}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sum\PYZus{}yy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{sum\PYZus{}yy}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{r}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{t\PYZus{}correlation}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{df}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}pairs} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{critical}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{correlation\PYZus{}critical}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{correlation\PYZus{}test}\PY{o}{.}\PY{n}{pvalue}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{reject}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{correlation\PYZus{}test}\PY{o}{.}\PY{n}{pvalue} \PY{o}{\PYZlt{}} \PY{n}{ALPHA}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{correlation\PYZus{}results}\PY{o}{.}\PY{n}{T}\PY{p}{)}
+\PY{n}{correlation\PYZus{}results}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{n}{RESULTS\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{part3\PYZus{}correlation.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                   0
+n                250
+sum\_xy       88681.7
+sum\_xx       1940.96
+sum\_yy    4.9485e+06
+r           0.904875
+t            33.4761
+df               248
+critical     1.96958
+p        5.74221e-94
+reject          True
+    \end{Verbatim}
+
+    
+    \textbf{\emph{Answer}}
+
+\textbf{Гіпотези:} \(H_0:\rho=0\), \(H_1:\rho\ne0\). Перевіряємо саме
+лінійний зв'язок. Використано 250 пар Page\_Views та Purchase\_Amount;
+пропусків немає. Якби вони були, вилучалися б цілі пари. Припускаємо
+незалежність пар. Звичайна формула p-значення спирається на спільний
+нормальний розподіл двох ознак. Page\_Views є кількістю переглядів, тому
+ця умова не виконується точно; p-значення використовуємо як наближення.
+
+\textbf{Статистика:}
+\[r=\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}{\sqrt{\sum_i(x_i-\bar x)^2\sum_i(y_i-\bar y)^2}}
+=\frac{88681.7496}{\sqrt{1940.9640\cdot4948498.8700}}=0.904875,\]
+\[t=r\sqrt{\frac{n-2}{1-r^2}}=0.904875\sqrt{\frac{248}{1-0.904875^2}}=33.476102.\]
+За \(df=248\) критична область: \(|t|>t_{0.975,248}=1.969576\).
+
+\textbf{Результат:} \(p=5.7422\times 10^{-94}<0.05\), тому за
+використаним критерієм \(H_0\) відхиляємо. Спостерігаємо сильний
+додатний лінійний зв'язок: користувачі з більшою кількістю переглядів
+зазвичай мають вищу суму покупки. Це не доводить причинного впливу
+переглядів на покупку. Нульова кореляція також не означала б загальної
+незалежності.
+
+    \subsection{3(d) --- Paid-subscription
+proportion}\label{d-paid-subscription-proportion}
+
+Test whether the population proportion represented by Subscription is
+greater than 0.10. State the test's assumptions and check the
+approximation conditions.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{subscription} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Subscription}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
+\PY{n}{n\PYZus{}subscription} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{subscription}\PY{p}{)}
+\PY{n}{count\PYZus{}subscription} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{subscription}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+\PY{n}{p0} \PY{o}{=} \PY{l+m+mf}{0.10}
+\PY{n}{subscription\PYZus{}share} \PY{o}{=} \PY{n}{count\PYZus{}subscription} \PY{o}{/} \PY{n}{n\PYZus{}subscription}
+\PY{n}{z\PYZus{}subscription} \PY{o}{=} \PY{p}{(}\PY{n}{subscription\PYZus{}share} \PY{o}{\PYZhy{}} \PY{n}{p0}\PY{p}{)} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{p0} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{p0}\PY{p}{)} \PY{o}{/} \PY{n}{n\PYZus{}subscription}\PY{p}{)}
+\PY{n}{z\PYZus{}builtin}\PY{p}{,} \PY{n}{p\PYZus{}subscription} \PY{o}{=} \PY{n}{proportions\PYZus{}ztest}\PY{p}{(}\PY{n}{count\PYZus{}subscription}\PY{p}{,} \PY{n}{n\PYZus{}subscription}\PY{p}{,}
+    \PY{n}{value}\PY{o}{=}\PY{n}{p0}\PY{p}{,} \PY{n}{alternative}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{larger}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{prop\PYZus{}var}\PY{o}{=}\PY{n}{p0}\PY{p}{)}
+\PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{isclose}\PY{p}{(}\PY{n}{z\PYZus{}subscription}\PY{p}{,} \PY{n}{z\PYZus{}builtin}\PY{p}{)}
+\PY{n}{subscription\PYZus{}critical} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{ALPHA}\PY{p}{)}
+\PY{n}{subscription\PYZus{}results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}subscription}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{successes}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{count\PYZus{}subscription}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{subscription\PYZus{}share}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{expected\PYZus{}successes\PYZus{}null}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}subscription} \PY{o}{*} \PY{n}{p0}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{expected\PYZus{}failures\PYZus{}null}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{n\PYZus{}subscription} \PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{p0}\PY{p}{)}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{z\PYZus{}subscription}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{critical}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{subscription\PYZus{}critical}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{p\PYZus{}subscription}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{reject}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{p\PYZus{}subscription} \PY{o}{\PYZlt{}} \PY{n}{ALPHA}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{subscription\PYZus{}results}\PY{o}{.}\PY{n}{T}\PY{p}{)}
+\PY{n}{subscription\PYZus{}results}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{n}{RESULTS\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{part3\PYZus{}subscription.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                                0
+n                             250
+successes                      34
+share                       0.136
+expected\_successes\_null        25
+expected\_failures\_null        225
+z                         1.89737
+critical                  1.64485
+p                       0.0288898
+reject                       True
+    \end{Verbatim}
+
+    
+    \textbf{\emph{Answer}}
+
+\textbf{Гіпотези:} \(H_0:p\le0.10\) проти \(H_1:p>0.10\). Маємо 250
+бінарних спостережень без пропусків та 34 підписки, тому
+\(\widehat p=34/250=0.136\). Припускаємо незалежні випробування Бернуллі
+зі спільною ймовірністю успіху. Для нормального наближення на межі
+\(H_0\) перевіряємо \(np_0=25\) та \(n(1-p_0)=225\); обидва значення
+перевищують 10.
+
+\textbf{Статистика:} \[z=\frac{\widehat p-p_0}{\sqrt{p_0(1-p_0)/n}}
+=\frac{0.136-0.10}{\sqrt{0.10\cdot0.90/250}}=1.897367.\] У
+\texttt{proportions\_ztest} явно задано \texttt{prop\_var=0.10}, щоб
+використати дисперсію за \(H_0\). Критична область:
+\(z>z_{0.95}=1.644854\).
+
+\textbf{Результат:} одностороннє \(p=0.028890<0.05\), тому \(H_0\)
+відхиляємо. Дані підтримують твердження, що генеральна частка платних
+підписок перевищує 10\%. Вибіркова частка дорівнює 13.6\%, тобто на 3.6
+відсоткового пункту вище за поріг. Це наближений висновок за припущень
+тесту; нормально розподілені окремі бінарні спостереження не потрібні.
+
+    \subsection{3(e) --- Revenue normality}\label{e-revenue-normality}
+
+Run the built-in statsmodels Lilliefors normality test on Revenue,
+without hand-calculating its statistic. Report hypotheses, returned
+statistic and p-value, decision, and interpretation. Explain which
+assumptions apply to each earlier test rather than assuming that binary
+proportions require normally distributed observations. For this section
+replace the manual-formula entry in the template with the function used.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{revenue} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Revenue}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{p}{)}
+\PY{n}{revenue\PYZus{}d}\PY{p}{,} \PY{n}{revenue\PYZus{}p} \PY{o}{=} \PY{n}{lilliefors}\PY{p}{(}\PY{n}{revenue}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{norm}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{pvalmethod}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{table}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{revenue\PYZus{}results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{n}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{revenue}\PY{p}{)}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{D}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{revenue\PYZus{}d}\PY{p}{]}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p\PYZus{}returned}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{revenue\PYZus{}p}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{reject}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{[}\PY{n}{revenue\PYZus{}p} \PY{o}{\PYZlt{}} \PY{n}{ALPHA}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{display}\PY{p}{(}\PY{n}{revenue\PYZus{}results}\PY{p}{)}
+\PY{n}{revenue\PYZus{}results}\PY{o}{.}\PY{n}{to\PYZus{}csv}\PY{p}{(}\PY{n}{RESULTS\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{part3\PYZus{}revenue\PYZus{}normality.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+     n        D  p\_returned  reject
+0  250 0.146746       0.001    True
+    \end{Verbatim}
+
+    
+    \textbf{\emph{Answer}}
+
+\textbf{Гіпотези:} \(H_0\): Revenue має нормальний розподіл з невідомими
+параметрами; \(H_1\): розподіл відрізняється від нормального.
+Використано 250 спостережень без пропусків; припускаємо незалежність і
+однаковий розподіл спостережень.
+
+\textbf{Вбудована функція:}
+\texttt{statsmodels.stats.diagnostic.lilliefors(revenue,\ dist="norm",\ pvalmethod="table")}.
+Статистику вручну не обчислюємо, як вимагає цей підпункт. Отримано
+\(D=0.146746\) та \(p_{\mathrm{returned}}=0.001\). Це нижня таблична
+межа, тому записуємо \(p\le0.001\). Правило відхилення: \(p<0.05\).
+
+\textbf{Результат:} нормальність сукупного Revenue відхиляємо. Просту
+нормальну модель розподілу індивідуального доходу ці дані не
+підтримують. Проте це не автоматично скасовує всі попередні висновки.
+Критерії для середніх можуть спиратися на ЦГТ при великих незалежних
+вибірках зі скінченною дисперсією; для Уелша важливі розподіли всередині
+платформ. Критерій Пірсона має окремі вимоги до спільного розподілу двох
+ознак. Критерій для частки використовує бінарні дані та нормальне
+наближення частки, а не нормальність окремих значень. Твердження умови
+про обов'язкову нормальність усіх ознак потребує цього уточнення.
+
+Усі перевірки частини 3 виконано окремо при \(\alpha=0.05\), як задано.
+Спільний рівень помилки для всієї серії тестів не контролюється.
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}

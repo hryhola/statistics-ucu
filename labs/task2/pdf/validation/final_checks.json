@@ -1,0 +1,198 @@
+{
+  "final_pdf_pages": 23,
+  "numbered_pages": "1–22 after unnumbered title",
+  "notebooks": [
+    {
+      "notebook": "notebooks/task2-part1-lln-clt.ipynb",
+      "executed_code_cells": 7,
+      "errors": 0
+    },
+    {
+      "notebook": "notebooks/task2-part2-maximum-likelihood.ipynb",
+      "executed_code_cells": 5,
+      "errors": 0
+    },
+    {
+      "notebook": "notebooks/task2-part3-hypothesis-tests.ipynb",
+      "executed_code_cells": 7,
+      "errors": 0
+    },
+    {
+      "notebook": "notebooks/task2-part4-test-size.ipynb",
+      "executed_code_cells": 4,
+      "errors": 0
+    },
+    {
+      "notebook": "notebooks/task2-part5-test-power.ipynb",
+      "executed_code_cells": 3,
+      "errors": 0
+    }
+  ],
+  "report_tables_match_csv": true,
+  "power_series": 59,
+  "required_lilliefors_tests": 59000,
+  "report_figures": 5,
+  "page_headers": [
+    {
+      "page": 1,
+      "header": "Зміст"
+    },
+    {
+      "page": 2,
+      "header": "Налаштування"
+    },
+    {
+      "page": 3,
+      "header": "Частина 1"
+    },
+    {
+      "page": 4,
+      "header": "Частина 1"
+    },
+    {
+      "page": 5,
+      "header": "Частина 1"
+    },
+    {
+      "page": 6,
+      "header": "Частина 1"
+    },
+    {
+      "page": 7,
+      "header": "Частина 1"
+    },
+    {
+      "page": 8,
+      "header": "Частина 1"
+    },
+    {
+      "page": 9,
+      "header": "Частина 1"
+    },
+    {
+      "page": 10,
+      "header": "Частина 2"
+    },
+    {
+      "page": 11,
+      "header": "Частина 2"
+    },
+    {
+      "page": 12,
+      "header": "Частина 2"
+    },
+    {
+      "page": 13,
+      "header": "Частина 3"
+    },
+    {
+      "page": 14,
+      "header": "Частина 3"
+    },
+    {
+      "page": 15,
+      "header": "Частина 3"
+    },
+    {
+      "page": 16,
+      "header": "Частина 3"
+    },
+    {
+      "page": 17,
+      "header": "Частина 3"
+    },
+    {
+      "page": 18,
+      "header": "Частина 4"
+    },
+    {
+      "page": 19,
+      "header": "Частина 4"
+    },
+    {
+      "page": 20,
+      "header": "Частина 5"
+    },
+    {
+      "page": 21,
+      "header": "Частина 5"
+    },
+    {
+      "page": 22,
+      "header": "Частина 5"
+    }
+  ],
+  "latex_overflows_or_missing_glyphs": false,
+  "all_five_notebook_latex_exports_compile_without_missing_glyphs": true,
+  "visual_review": "After folder reorganization, physical pages 3, 11, and 14 with updated path snippets were visually inspected. The other 20 pages are pixel-identical to the previously inspected PDF. Headers and sequential page numbers rechecked; no LaTeX overflow or missing-glyph warnings.",
+  "final_recheck": {
+    "factual_accuracy": "Passed: fresh independent CSV-based review, full fresh-kernel rerun, unchanged numerical CSVs and report tables.",
+    "student_level": "Passed: simplified binary-data and Pearson caveats; removed optional exact Gamma distribution; shortened diagnostic simulation explanation without changing conclusions.",
+    "assignment_consistency": "Passed: all five required parts checked against the four-page assignment; optional n=100 simulation omitted."
+  },
+  "sha256": {
+    "pdf/output/pdf/Task_2_Final_Report.pdf": "03984b34b6b430cc205e348739de98b7ecde539c6ff87cd0dfd9fcb822c36b78",
+    "pdf/report/Task_2_Report.tex": "b0765aa8fb41e56c61abe6637c111782de14bbd981869ee05b483b9b0e4a9a76",
+    "input/app_metrics.csv": "093df9077d6787e1b175dea06f4e1dd651a837e8faa2ed8db062d11238ea7dae",
+    "input/assignment_2.pdf": "3b97cda615f1cbc6e9d3479eabef7a86247cd6395286c36708207ea26c582e34"
+  },
+  "presentation_revision": {
+    "date": "2026-10-15",
+    "task_statement_blocks": 16,
+    "interpretation_blocks": 16,
+    "included_code_blocks": 22,
+    "editable_code_snapshots_matching_notebooks": 26,
+    "original_tables_unchanged": 3,
+    "original_figures_unchanged": 5,
+    "notebook_execution": "All five notebooks rerun from notebooks/ in separate fresh kernels after the folder reorganization; 26 code cells, zero errors."
+  },
+  "findings_review": {
+    "date": "2026-10-15",
+    "details": "pdf/validation/findings_review.md",
+    "independent_reviewer": "task2_csv_recheck",
+    "independent_csv_check_passed": true,
+    "all_16_result_csvs_byte_identical_to_before_edits": true,
+    "original_3_tables_unchanged": true,
+    "all_16_task_statements_unchanged": true,
+    "portability_setup_checks_passed": 20,
+    "assignment_pdf_required_for_execution": false,
+    "omitted_optional_changes": [
+      "additional scatter plot",
+      "reducing code in PDF"
+    ],
+    "required_work_remaining": false
+  },
+  "final_technical_clarifications": {
+    "main_simulation_seed": 42,
+    "control_simulation_seed": 20261014,
+    "submission": "One PDF; notebooks and control verification materials prepared for the individual defence.",
+    "fresh_kernel_run_all": "All five notebooks rerun again after the user request; 26 code cells, zero errors.",
+    "numerical_result_csvs_unchanged": 16,
+    "refreshed_notebook_exports_identical_to_previously_compiled_versions": 5,
+    "changed_physical_pdf_pages": [
+      2,
+      22
+    ]
+  },
+  "sha256_base": "labs/task2/",
+  "reorganization": {
+    "folders": [
+      "input/",
+      "notebooks/",
+      "pdf/"
+    ],
+    "original_input_files_unchanged": 2,
+    "numeric_result_csvs_unchanged": 16,
+    "fresh_kernel_execution": "All five notebooks executed from notebooks/; 26 cells, zero errors.",
+    "setup_path_checks": 20,
+    "statistical_code_and_assignment_questions_preserved": true,
+    "all_documentation_links_resolve": true,
+    "all_five_notebook_latex_exports_compile": true,
+    "changed_physical_pdf_pages": [
+      3,
+      11,
+      14
+    ],
+    "required_work_remaining": false
+  }
+}
