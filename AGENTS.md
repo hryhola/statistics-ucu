@@ -4,6 +4,10 @@ These rules apply to coursework maintained in this repository.
 
 - Assignment descriptions, supplied notebook questions, and official course
   materials define the scope, methods, permitted libraries, and deliverables.
+- Use the reference materials in `sources/` as the primary sources for statistics,
+  probability, and econometrics topics. Follow assignment-specific requirements
+  and official course materials in `sources/UCU/` when choosing methods and
+  notation. See `sources/README.md` for the local reference list.
 - Preserve supplied questions, scaffolding, random seeds, and required comments.
 - Keep optional extensions separate from required work; record unattempted parts.
 - Justify statistical claims, state assumptions, and distinguish exact results

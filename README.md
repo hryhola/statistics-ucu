@@ -5,6 +5,9 @@ UCU statistics coursework, organized like the linear algebra repository:
 - `labs/task1/`: Task 1 assignment and notebooks
 - `labs/task2/`: completed Task 2 notebooks, editable LaTeX report, and submission PDF
 - `workshops/`: workshop exercises
+- `sources/`: local reference books and course materials; see the
+  [source list](sources/README.md). Reference PDFs are ignored by Git and must be
+  supplied locally.
 
 ## Environment setup
 
