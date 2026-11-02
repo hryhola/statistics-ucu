@@ -1,0 +1,2 @@
+Без p0 curve_fit повернув: [1. 1.] | MSE: inf
+Попередження: ['OptimizeWarning: Covariance of the parameters could not be estimated', 'RuntimeWarning: overflow encountered in exp']

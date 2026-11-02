@@ -1,0 +1,951 @@
+{
+  "notebooks": {
+    "task3-problem5-linear-regression.ipynb": "1488c690a9cf7552e4f4dcbb6802abbabc0f9f1da2adf61b9988fa6d32969e2f",
+    "task3-problem6-nonlinear-regression.ipynb": "c5104e4d7821f72562d997dcfe522c52ecc18d2ac009409e08515d90917816f2"
+  },
+  "code_cells": 15,
+  "tables": 32,
+  "figures": [
+    "problem5_mssubclass.png",
+    "problem5_scatter.png",
+    "problem5_normality.png",
+    "problem5_influence.png",
+    "problem5_jtest.png",
+    "problem5_cv.png",
+    "problem6_linear.png",
+    "problem6_nonlinear.png",
+    "problem6_residuals.png"
+  ],
+  "snippets": {
+    "common": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 2,
+          "prefix": "SEED =",
+          "statement": "SEED = 42",
+          "source": "SEED = 42"
+        },
+        {
+          "cell": 2,
+          "prefix": "ALPHA =",
+          "statement": "ALPHA = 0.05",
+          "source": "ALPHA = 0.05"
+        },
+        {
+          "cell": 2,
+          "prefix": "rng =",
+          "statement": "rng = np.random.default_rng(SEED)",
+          "source": "rng = np.random.default_rng(SEED)"
+        },
+        {
+          "cell": 3,
+          "prefix": "DATA_PATH =",
+          "statement": "DATA_PATH = INPUT_DIR / \"AmesHousing.txt\"",
+          "source": "DATA_PATH = INPUT_DIR / \"AmesHousing.txt\""
+        },
+        {
+          "cell": 3,
+          "prefix": "df =",
+          "statement": "df = pd.read_csv(DATA_PATH, sep=\"\\t\", keep_default_na=False, na_values=[\"\"])",
+          "source": "# Пропуск - лише порожнє поле; текст \"NA\" лишається значенням категорії.\ndf = pd.read_csv(DATA_PATH, sep=\"\\t\", keep_default_na=False, na_values=[\"\"])"
+        },
+        {
+          "cell": 3,
+          "prefix": "df.columns =",
+          "statement": "df.columns = df.columns.str.replace(\" \", \"\").str.replace(\"/\", \"\")",
+          "source": "# Назви як у Kaggle та в умові: \"Lot Area\" -> \"LotArea\", \"Year Remod/Add\" -> \"YearRemodAdd\".\ndf.columns = df.columns.str.replace(\" \", \"\").str.replace(\"/\", \"\")"
+        },
+        {
+          "cell": 3,
+          "prefix": "text_columns =",
+          "statement": "text_columns = list(df.select_dtypes(exclude=\"number\").columns)",
+          "source": "text_columns = list(df.select_dtypes(exclude=\"number\").columns)"
+        },
+        {
+          "cell": 3,
+          "prefix": "for column in text_columns",
+          "statement": "for column in text_columns:\n    df[column] = df[column].str.strip()",
+          "source": "for column in text_columns:\n    df[column] = df[column].str.strip()  # у SaleType є зайві пробіли, напр. \"WD \""
+        },
+        {
+          "cell": 3,
+          "prefix": "categorical =",
+          "statement": "categorical = [\"MSSubClass\"] + text_columns",
+          "source": "# MSSubClass і текстові колонки - категорії; рядок \"NA\" в них - окремий рівень.\ncategorical = [\"MSSubClass\"] + text_columns"
+        },
+        {
+          "cell": 3,
+          "prefix": "excluded =",
+          "statement": "excluded = [\"Order\", \"PID\", \"SalePrice\", \"GarageYrBlt\", \"TotalBsmtSF\", \"GrLivArea\"]",
+          "source": "# Order, PID - ідентифікатори; GarageYrBlt не існує для будинків без гаража;\n# TotalBsmtSF і GrLivArea - точні суми інших площ (див. пункт 4).\nexcluded = [\"Order\", \"PID\", \"SalePrice\", \"GarageYrBlt\", \"TotalBsmtSF\", \"GrLivArea\"]"
+        },
+        {
+          "cell": 3,
+          "prefix": "numeric =",
+          "statement": "numeric = [column for column in df.columns if column not in categorical + excluded]",
+          "source": "numeric = [column for column in df.columns if column not in categorical + excluded]"
+        },
+        {
+          "cell": 3,
+          "prefix": "analysis =",
+          "statement": "analysis = df.dropna(subset=numeric + categorical).copy()",
+          "source": "analysis = df.dropna(subset=numeric + categorical).copy()"
+        }
+      ],
+      "frame": [
+        "# Вище: імпорти бібліотек, шляхи до файлів, налаштування графіків.",
+        "# Далі: розмір df, кількість пропусків і структурних рівнів \"NA\"."
+      ]
+    },
+    "p5-c5": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 5,
+          "prefix": "numeric_class =",
+          "statement": "numeric_class = smf.ols(\"SalePrice ~ MSSubClass\", data=df).fit()",
+          "source": "numeric_class = smf.ols(\"SalePrice ~ MSSubClass\", data=df).fit()          # як int64"
+        },
+        {
+          "cell": 5,
+          "prefix": "formula_class =",
+          "statement": "formula_class = smf.ols(\"SalePrice ~ C(MSSubClass)\", data=df).fit()",
+          "source": "formula_class = smf.ols(\"SalePrice ~ C(MSSubClass)\", data=df).fit()       # C(...) у формулі"
+        },
+        {
+          "cell": 5,
+          "prefix": "df_category =",
+          "statement": "df_category = df.assign(MSSubClass=pd.Categorical(df[\"MSSubClass\"]))",
+          "source": "df_category = df.assign(MSSubClass=pd.Categorical(df[\"MSSubClass\"]))"
+        },
+        {
+          "cell": 5,
+          "prefix": "category_class =",
+          "statement": "category_class = smf.ols(\"SalePrice ~ MSSubClass\", data=df_category).fit()",
+          "source": "category_class = smf.ols(\"SalePrice ~ MSSubClass\", data=df_category).fit()  # pd.Categorical"
+        }
+      ],
+      "frame": [
+        "# Вище: print типу MSSubClass (вивід нижче).",
+        "# Далі: assert рівності прогнозів, збирання таблиць (виводи нижче), графік."
+      ]
+    },
+    "p5-c8": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 8,
+          "prefix": "scatter_columns =",
+          "statement": "scatter_columns = [\"LotFrontage\", \"LotArea\", \"YearBuilt\", \"BsmtFinSF1\", \"BsmtUnfSF\"]",
+          "source": "scatter_columns = [\"LotFrontage\", \"LotArea\", \"YearBuilt\", \"BsmtFinSF1\", \"BsmtUnfSF\"]"
+        },
+        {
+          "cell": 8,
+          "prefix": "units =",
+          "statement": "units = {\"LotFrontage\": \"фути\", \"LotArea\": \"кв. фути\", \"YearBuilt\": \"рік\",\n         \"BsmtFinSF1\": \"кв. фути\", \"BsmtUnfSF\": \"кв. фути\"}",
+          "source": "units = {\"LotFrontage\": \"фути\", \"LotArea\": \"кв. фути\", \"YearBuilt\": \"рік\",\n         \"BsmtFinSF1\": \"кв. фути\", \"BsmtUnfSF\": \"кв. фути\"}"
+        },
+        {
+          "cell": 8,
+          "prefix": "fig, axes =",
+          "statement": "fig, axes = plt.subplots(2, 3, figsize=(15, 8))",
+          "source": "# П’ять діаграм розсіювання; пропуски (LotFrontage) прибираємо попарно.\nfig, axes = plt.subplots(2, 3, figsize=(15, 8))"
+        },
+        {
+          "cell": 8,
+          "prefix": "for ax, column",
+          "statement": "for ax, column in zip(axes.flat, scatter_columns):\n    pairs = df[[column, \"SalePrice\"]].dropna()\n    ax.scatter(pairs[column], pairs[\"SalePrice\"], s=8, alpha=0.3)\n    ax.set(title=f\"SalePrice та {column} (n={len(pairs)})\",\n           xlabel=f\"{column}, {units[column]}\", ylabel=\"SalePrice, дол. США\")",
+          "source": "for ax, column in zip(axes.flat, scatter_columns):\n    pairs = df[[column, \"SalePrice\"]].dropna()\n    ax.scatter(pairs[column], pairs[\"SalePrice\"], s=8, alpha=0.3)\n    ax.set(title=f\"SalePrice та {column} (n={len(pairs)})\",\n           xlabel=f\"{column}, {units[column]}\", ylabel=\"SalePrice, дол. США\")"
+        },
+        {
+          "cell": 8,
+          "prefix": "axes.flat[-1].axis",
+          "statement": "axes.flat[-1].axis(\"off\")",
+          "source": "axes.flat[-1].axis(\"off\")"
+        },
+        {
+          "cell": 8,
+          "prefix": "plt.show()",
+          "statement": "plt.show()",
+          "source": "plt.show()"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: збереження рисунка; describe(), нулі, кореляції, групи років (виводи нижче)."
+      ]
+    },
+    "p5-c11": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 11,
+          "prefix": "simple_model =",
+          "statement": "simple_model = sm.OLS(df[\"SalePrice\"], sm.add_constant(df[[\"LotArea\"]])).fit()",
+          "source": "# Проста регресія з константою; summary() дає оцінки, SE, t, p та R².\nsimple_model = sm.OLS(df[\"SalePrice\"], sm.add_constant(df[[\"LotArea\"]])).fit()"
+        },
+        {
+          "cell": 11,
+          "prefix": "print(simple_model.summary())",
+          "statement": "print(simple_model.summary())",
+          "source": "print(simple_model.summary())"
+        },
+        {
+          "cell": 11,
+          "prefix": "beta_1 =",
+          "statement": "beta_1 = simple_model.params[\"LotArea\"]",
+          "source": "beta_1 = simple_model.params[\"LotArea\"]"
+        },
+        {
+          "cell": 11,
+          "prefix": "se_1 =",
+          "statement": "se_1 = simple_model.bse[\"LotArea\"]",
+          "source": "se_1 = simple_model.bse[\"LotArea\"]"
+        },
+        {
+          "cell": 11,
+          "prefix": "t_1 =",
+          "statement": "t_1 = (beta_1 - 0) / se_1",
+          "source": "t_1 = (beta_1 - 0) / se_1"
+        },
+        {
+          "cell": 11,
+          "prefix": "p_1 =",
+          "statement": "p_1 = 2 * stats.t.sf(abs(t_1), df=simple_model.df_resid)",
+          "source": "p_1 = 2 * stats.t.sf(abs(t_1), df=simple_model.df_resid)"
+        },
+        {
+          "cell": 11,
+          "prefix": "assert np.isclose(t_1",
+          "statement": "assert np.isclose(t_1, simple_model.tvalues[\"LotArea\"])",
+          "source": "assert np.isclose(t_1, simple_model.tvalues[\"LotArea\"])"
+        },
+        {
+          "cell": 11,
+          "prefix": "assert np.isclose(p_1",
+          "statement": "assert np.isclose(p_1, simple_model.pvalues[\"LotArea\"])",
+          "source": "assert np.isclose(p_1, simple_model.pvalues[\"LotArea\"])"
+        },
+        {
+          "cell": 11,
+          "prefix": "display(pd.Series",
+          "statement": "display(pd.Series({\"n\": simple_model.nobs, \"beta_1\": beta_1, \"SE(beta_1)\": se_1, \"t\": t_1,\n                   \"df = n - 2\": simple_model.df_resid, \"p\": p_1,\n                   \"t_0.975,df\": stats.t.ppf(1 - ALPHA / 2, simple_model.df_resid),\n                   \"R²\": simple_model.rsquared, \"Скоригований R²\": simple_model.rsquared_adj,\n                   \"Стандартна похибка регресії, дол.\": np.sqrt(simple_model.mse_resid)}).to_frame(\"Значення\"))",
+          "source": "display(pd.Series({\"n\": simple_model.nobs, \"beta_1\": beta_1, \"SE(beta_1)\": se_1, \"t\": t_1,\n                   \"df = n - 2\": simple_model.df_resid, \"p\": p_1,\n                   \"t_0.975,df\": stats.t.ppf(1 - ALPHA / 2, simple_model.df_resid),\n                   \"R²\": simple_model.rsquared, \"Скоригований R²\": simple_model.rsquared_adj,\n                   \"Стандартна похибка регресії, дол.\": np.sqrt(simple_model.mse_resid)}).to_frame(\"Значення\"))"
+        }
+      ],
+      "frame": [
+        null,
+        null
+      ]
+    },
+    "p5-c14": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 14,
+          "prefix": "category_order =",
+          "statement": "category_order = [\"BldgType\"] + [c for c in categorical if c != \"BldgType\"]",
+          "source": "# Зберігаємо повні блоки кожної початкової змінної, навіть якщо індикатори збігаються.\n# BldgType перед MSSubClass: спільний індикатор Duplex належить контрольній змінній.\ncategory_order = [\"BldgType\"] + [c for c in categorical if c != \"BldgType\"]"
+        },
+        {
+          "cell": 14,
+          "prefix": "groups =",
+          "statement": "groups = {column: [column] for column in numeric}",
+          "source": "groups = {column: [column] for column in numeric}"
+        },
+        {
+          "cell": 14,
+          "prefix": "blocks =",
+          "statement": "blocks = [analysis[numeric].astype(float)]",
+          "source": "blocks = [analysis[numeric].astype(float)]"
+        },
+        {
+          "cell": 14,
+          "prefix": "for column in category_order",
+          "statement": "for column in category_order:\n    dummies = pd.get_dummies(analysis[column], prefix=column, dtype=float)\n    dummies = dummies.drop(columns=f\"{column}_{analysis[column].mode()[0]}\")\n    groups[column] = list(dummies.columns)\n    blocks.append(dummies)",
+          "source": "for column in category_order:\n    dummies = pd.get_dummies(analysis[column], prefix=column, dtype=float)\n    dummies = dummies.drop(columns=f\"{column}_{analysis[column].mode()[0]}\")\n    groups[column] = list(dummies.columns)\n    blocks.append(dummies)"
+        },
+        {
+          "cell": 14,
+          "prefix": "X_encoded =",
+          "statement": "X_encoded = pd.concat(blocks, axis=1)",
+          "source": "X_encoded = pd.concat(blocks, axis=1)"
+        },
+        {
+          "cell": 14,
+          "prefix": "def design_matrix",
+          "statement": "def design_matrix(active):\n    \"\"\"Матриця активних змінних: прибираємо копії лише в цій моделі.\"\"\"\n    columns = [c for group in active for c in groups[group]]\n    X = X_encoded[columns]\n    return sm.add_constant(X.loc[:, ~X.T.duplicated()], has_constant=\"add\")",
+          "source": "def design_matrix(active):\n    \"\"\"Матриця активних змінних: прибираємо копії лише в цій моделі.\"\"\"\n    columns = [c for group in active for c in groups[group]]\n    X = X_encoded[columns]\n    return sm.add_constant(X.loc[:, ~X.T.duplicated()], has_constant=\"add\")"
+        },
+        {
+          "cell": 14,
+          "prefix": "X_full =",
+          "statement": "X_full = design_matrix(list(groups))",
+          "source": "X_full = design_matrix(list(groups))"
+        },
+        {
+          "cell": 14,
+          "prefix": "y =",
+          "statement": "y = analysis[\"SalePrice\"].astype(float)",
+          "source": "y = analysis[\"SalePrice\"].astype(float)"
+        },
+        {
+          "cell": 14,
+          "prefix": "full_model =",
+          "statement": "full_model = sm.OLS(y, X_full).fit()",
+          "source": "full_model = sm.OLS(y, X_full).fit()"
+        },
+        {
+          "cell": 14,
+          "prefix": "dummy_names =",
+          "statement": "dummy_names = [name for name in X_full.columns if name.startswith(\"MSSubClass_\")]",
+          "source": "# Коефіцієнти MSSubClass, які справді оцінюються (без копії індикатора дуплексу).\ndummy_names = [name for name in X_full.columns if name.startswith(\"MSSubClass_\")]"
+        },
+        {
+          "cell": 14,
+          "prefix": "q, k =",
+          "statement": "q, k = len(dummy_names), X_full.shape[1]",
+          "source": "q, k = len(dummy_names), X_full.shape[1]"
+        },
+        {
+          "cell": 14,
+          "prefix": "positions =",
+          "statement": "positions = X_full.columns.get_indexer(dummy_names)",
+          "source": "positions = X_full.columns.get_indexer(dummy_names)"
+        },
+        {
+          "cell": 14,
+          "prefix": "R =",
+          "statement": "R = np.zeros((q, k))",
+          "source": "# Матриця обмежень: один рядок на кожен коефіцієнт MSSubClass; вектор r = 0.\nR = np.zeros((q, k))"
+        },
+        {
+          "cell": 14,
+          "prefix": "R[np.arange",
+          "statement": "R[np.arange(q), positions] = 1",
+          "source": "R[np.arange(q), positions] = 1"
+        },
+        {
+          "cell": 14,
+          "prefix": "r =",
+          "statement": "r = np.zeros(q)",
+          "source": "r = np.zeros(q)"
+        },
+        {
+          "cell": 14,
+          "prefix": "f_result =",
+          "statement": "f_result = full_model.f_test((R, r))",
+          "source": "# f_test() перевіряє H0: R beta = r у повній моделі.\nf_result = full_model.f_test((R, r))"
+        }
+      ],
+      "frame": [
+        "# Вище: assert, що TotalBsmtSF і GrLivArea є сумами інших площ.",
+        "# Далі: assert рангу, модель без MSSubClass, ручний F і assert збігу з f_test()."
+      ]
+    },
+    "p5-c17": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 17,
+          "prefix": "full_log_model =",
+          "statement": "full_log_model = sm.OLS(np.log(y), X_full).fit()",
+          "source": "# Та сама матриця X_full, але відгук - log(SalePrice).\nfull_log_model = sm.OLS(np.log(y), X_full).fit()"
+        },
+        {
+          "cell": 17,
+          "prefix": "first_dummy =",
+          "statement": "first_dummy = dummy_names[0]",
+          "source": "first_dummy = dummy_names[0]"
+        },
+        {
+          "cell": 17,
+          "prefix": "terms =",
+          "statement": "terms = [\"LotArea\", first_dummy, \"BedroomAbvGr\"]",
+          "source": "terms = [\"LotArea\", first_dummy, \"BedroomAbvGr\"]"
+        },
+        {
+          "cell": 17,
+          "prefix": "gamma =",
+          "statement": "gamma = full_log_model.params[terms]",
+          "source": "gamma = full_log_model.params[terms]"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: збирання таблиць коефіцієнтів і років побудови класів 20 і 30 (виводи нижче)."
+      ]
+    },
+    "p5-c20": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 20,
+          "prefix": "ci =",
+          "statement": "ci = full_model.conf_int(alpha=ALPHA).loc[\"LotArea\"]",
+          "source": "# conf_int() будує інтервал beta ± t_{0.975, n-k} * SE.\nci = full_model.conf_int(alpha=ALPHA).loc[\"LotArea\"]"
+        },
+        {
+          "cell": 20,
+          "prefix": "jb =",
+          "statement": "jb = stats.jarque_bera(full_model.resid)",
+          "source": "# H0 Jarque-Bera: асиметрія 0 та ексцес 3, як у нормального розподілу.\njb = stats.jarque_bera(full_model.resid)"
+        },
+        {
+          "cell": 20,
+          "prefix": "fig, axes =",
+          "statement": "fig, axes = plt.subplots(1, 2, figsize=(12, 4))",
+          "source": "fig, axes = plt.subplots(1, 2, figsize=(12, 4))"
+        },
+        {
+          "cell": 20,
+          "prefix": "axes[0].hist",
+          "statement": "axes[0].hist(full_model.resid, bins=60, edgecolor=\"white\")",
+          "source": "axes[0].hist(full_model.resid, bins=60, edgecolor=\"white\")"
+        },
+        {
+          "cell": 20,
+          "prefix": "sm.qqplot",
+          "statement": "sm.qqplot(full_model.resid, line=\"s\", ax=axes[1], markersize=3)",
+          "source": "sm.qqplot(full_model.resid, line=\"s\", ax=axes[1], markersize=3)"
+        },
+        {
+          "cell": 20,
+          "prefix": "plt.show()",
+          "statement": "plt.show()",
+          "source": "plt.show()"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: ручний перерахунок інтервалу з assert, підписи осей, збереження рисунка."
+      ]
+    },
+    "p5-c23": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 23,
+          "prefix": "def backward_bic",
+          "statement": "def backward_bic(y, groups):\n    \"\"\"Зворотний відбір початкових змінних за BIC.\"\"\"\n    active = list(groups)\n    model = sm.OLS(y, design_matrix(active)).fit()\n    history = [{\"Крок\": 0, \"Вилучено\": \"-\", \"k\": int(model.df_model + 1), \"BIC\": model.bic}]\n    while active:\n        best_group, best_model = None, None\n        # Пробуємо вилучити кожну змінну окремо; запам’ятовуємо кандидата з найменшим BIC.\n        for group in active:\n            remaining = [g for g in active if g != group]\n            candidate = sm.OLS(y, design_matrix(remaining)).fit()\n            if best_model is None or candidate.bic < best_model.bic:\n                best_group, best_model = group, candidate\n        # Зупиняємося, коли жодне вилучення не зменшує BIC.\n        if best_model.bic >= model.bic:\n            break\n        active.remove(best_group)\n        model = best_model\n        history.append({\"Крок\": len(history), \"Вилучено\": best_group,\n                        \"k\": int(model.df_model + 1), \"BIC\": model.bic})\n    return model, active, pd.DataFrame(history)",
+          "source": "def backward_bic(y, groups):\n    \"\"\"Зворотний відбір початкових змінних за BIC.\"\"\"\n    active = list(groups)\n    model = sm.OLS(y, design_matrix(active)).fit()\n    history = [{\"Крок\": 0, \"Вилучено\": \"-\", \"k\": int(model.df_model + 1), \"BIC\": model.bic}]\n    while active:\n        best_group, best_model = None, None\n        # Пробуємо вилучити кожну змінну окремо; запам’ятовуємо кандидата з найменшим BIC.\n        for group in active:\n            remaining = [g for g in active if g != group]\n            candidate = sm.OLS(y, design_matrix(remaining)).fit()\n            if best_model is None or candidate.bic < best_model.bic:\n                best_group, best_model = group, candidate\n        # Зупиняємося, коли жодне вилучення не зменшує BIC.\n        if best_model.bic >= model.bic:\n            break\n        active.remove(best_group)\n        model = best_model\n        history.append({\"Крок\": len(history), \"Вилучено\": best_group,\n                        \"k\": int(model.df_model + 1), \"BIC\": model.bic})\n    return model, active, pd.DataFrame(history)"
+        },
+        {
+          "cell": 23,
+          "prefix": "selected_model, selected_terms, history =",
+          "statement": "selected_model, selected_terms, history = backward_bic(y, groups)",
+          "source": "# Починаємо з усіх початкових змінних; категорію вилучаємо цілим блоком індикаторів.\nselected_model, selected_terms, history = backward_bic(y, groups)"
+        },
+        {
+          "cell": 23,
+          "prefix": "X_selected =",
+          "statement": "X_selected = design_matrix(selected_terms)",
+          "source": "X_selected = design_matrix(selected_terms)"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: assert рангу і локального оптимуму BIC; друк історії та списку змінних."
+      ]
+    },
+    "p5-c26": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 26,
+          "prefix": "influence =",
+          "statement": "influence = OLSInfluence(selected_model)",
+          "source": "influence = OLSInfluence(selected_model)"
+        },
+        {
+          "cell": 26,
+          "prefix": "with np.errstate",
+          "statement": "with np.errstate(invalid=\"ignore\", divide=\"ignore\"):  # для h = 1 формули містять 0/0\n    leverage = pd.Series(influence.hat_matrix_diag, index=y.index)\n    student = pd.Series(influence.resid_studentized_internal, index=y.index)\n    cooks = pd.Series(influence.cooks_distance[0], index=y.index)",
+          "source": "with np.errstate(invalid=\"ignore\", divide=\"ignore\"):  # для h = 1 формули містять 0/0\n    leverage = pd.Series(influence.hat_matrix_diag, index=y.index)\n    student = pd.Series(influence.resid_studentized_internal, index=y.index)\n    cooks = pd.Series(influence.cooks_distance[0], index=y.index)"
+        },
+        {
+          "cell": 26,
+          "prefix": "exact_fit =",
+          "statement": "exact_fit = leverage > 1 - 1e-8",
+          "source": "# h = 1: модель точно підганяє продаж, його залишок дорівнює нулю.\nexact_fit = leverage > 1 - 1e-8"
+        },
+        {
+          "cell": 26,
+          "prefix": "cooks[exact_fit] =",
+          "statement": "cooks[exact_fit] = np.nan",
+          "source": "cooks[exact_fit] = np.nan    # h = 1: залишок 0, D = 0/0 не визначено"
+        },
+        {
+          "cell": 26,
+          "prefix": "student[exact_fit] =",
+          "statement": "student[exact_fit] = np.nan",
+          "source": "student[exact_fit] = np.nan"
+        },
+        {
+          "cell": 26,
+          "prefix": "top_cook =",
+          "statement": "top_cook = cooks.idxmax()",
+          "source": "# Чутливість: оцінки без спостереження з найбільшим Cook's D.\ntop_cook = cooks.idxmax()"
+        },
+        {
+          "cell": 26,
+          "prefix": "without_top =",
+          "statement": "without_top = sm.OLS(y.drop(top_cook), X_selected.drop(top_cook)).fit()",
+          "source": "without_top = sm.OLS(y.drop(top_cook), X_selected.drop(top_cook)).fit()"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: assert суми важелів, пошук рідкісних рівнів для h = 1, таблиці, графіки."
+      ]
+    },
+    "p5-c29": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 29,
+          "prefix": "masked_index =",
+          "statement": "masked_index = rng.choice(df.index.to_numpy(), size=5, replace=False)",
+          "source": "# Повний df: усі 2930 рядків і всі колонки. Ховаємо LotArea у 5 випадкових рядках.\nmasked_index = rng.choice(df.index.to_numpy(), size=5, replace=False)"
+        },
+        {
+          "cell": 29,
+          "prefix": "true_lotarea =",
+          "statement": "true_lotarea = df.loc[masked_index, \"LotArea\"]",
+          "source": "true_lotarea = df.loc[masked_index, \"LotArea\"]"
+        },
+        {
+          "cell": 29,
+          "prefix": "df_missing =",
+          "statement": "df_missing = df.copy()",
+          "source": "df_missing = df.copy()"
+        },
+        {
+          "cell": 29,
+          "prefix": "df_missing[\"LotArea\"] =",
+          "statement": "df_missing[\"LotArea\"] = df_missing[\"LotArea\"].astype(float)",
+          "source": "df_missing[\"LotArea\"] = df_missing[\"LotArea\"].astype(float)"
+        },
+        {
+          "cell": 29,
+          "prefix": "df_missing.loc[masked_index",
+          "statement": "df_missing.loc[masked_index, \"LotArea\"] = np.nan",
+          "source": "df_missing.loc[masked_index, \"LotArea\"] = np.nan"
+        },
+        {
+          "cell": 29,
+          "prefix": "impute_columns =",
+          "statement": "impute_columns = [c for c in df.select_dtypes(\"number\").columns\n                  if c not in [\"Order\", \"PID\", \"SalePrice\", \"MSSubClass\", \"GarageYrBlt\"]]",
+          "source": "# Заповнюємо лише числові NaN. Категоріальні \"NA\" не чіпаємо; GarageYrBlt без гаража\n# не є пропуском; MSSubClass - коди категорій; SalePrice - відгук, який пояснюємо.\nimpute_columns = [c for c in df.select_dtypes(\"number\").columns\n                  if c not in [\"Order\", \"PID\", \"SalePrice\", \"MSSubClass\", \"GarageYrBlt\"]]"
+        },
+        {
+          "cell": 29,
+          "prefix": "median_filled =",
+          "statement": "median_filled = df_missing.copy()",
+          "source": "# Підхід 1: медіана колонки. Підхід 2: кожну колонку з пропусками регресуємо на решту.\nmedian_filled = df_missing.copy()"
+        },
+        {
+          "cell": 29,
+          "prefix": "median_filled[impute_columns] =",
+          "statement": "median_filled[impute_columns] = SimpleImputer(strategy=\"median\").fit_transform(df_missing[impute_columns])",
+          "source": "median_filled[impute_columns] = SimpleImputer(strategy=\"median\").fit_transform(df_missing[impute_columns])"
+        },
+        {
+          "cell": 29,
+          "prefix": "iterative_filled =",
+          "statement": "iterative_filled = df_missing.copy()",
+          "source": "iterative_filled = df_missing.copy()"
+        },
+        {
+          "cell": 29,
+          "prefix": "iterative_filled[impute_columns] =",
+          "statement": "iterative_filled[impute_columns] = IterativeImputer(max_iter=25, random_state=SEED).fit_transform(df_missing[impute_columns])",
+          "source": "iterative_filled[impute_columns] = IterativeImputer(max_iter=25, random_state=SEED).fit_transform(df_missing[impute_columns])"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: таблиці порівняння з істинними значеннями; assert, що змінено лише пропуски."
+      ]
+    },
+    "p5-c32": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 32,
+          "prefix": "level_model =",
+          "statement": "level_model = selected_model",
+          "source": "level_model = selected_model"
+        },
+        {
+          "cell": 32,
+          "prefix": "log_model =",
+          "statement": "log_model = sm.OLS(np.log(y), X_selected).fit()",
+          "source": "log_model = sm.OLS(np.log(y), X_selected).fit()"
+        },
+        {
+          "cell": 32,
+          "prefix": "n_obs =",
+          "statement": "n_obs = len(y)",
+          "source": "n_obs = len(y)"
+        },
+        {
+          "cell": 32,
+          "prefix": "assert (level_model",
+          "statement": "assert (level_model.fittedvalues > 0).all()",
+          "source": "# Двостороннє порівняння через штучні регресори (тест Девідсона–Маккіннона).\n# Прогнози альтернативної моделі переводимо в шкалу залежної змінної.\nassert (level_model.fittedvalues > 0).all()  # без цього log(прогнозу) не визначений"
+        },
+        {
+          "cell": 32,
+          "prefix": "aux_level =",
+          "statement": "aux_level = sm.OLS(y, X_selected.assign(alternative=np.exp(log_model.fittedvalues) / 1000)).fit()",
+          "source": "aux_level = sm.OLS(y, X_selected.assign(alternative=np.exp(log_model.fittedvalues) / 1000)).fit()"
+        },
+        {
+          "cell": 32,
+          "prefix": "aux_log =",
+          "statement": "aux_log = sm.OLS(np.log(y), X_selected.assign(alternative=np.log(level_model.fittedvalues))).fit()",
+          "source": "aux_log = sm.OLS(np.log(y), X_selected.assign(alternative=np.log(level_model.fittedvalues))).fit()"
+        },
+        {
+          "cell": 32,
+          "prefix": "comparison_rows =",
+          "statement": "comparison_rows = []",
+          "source": "comparison_rows = []"
+        },
+        {
+          "cell": 32,
+          "prefix": "for name, auxiliary",
+          "statement": "for name, auxiliary in [(\"SalePrice ~ X\", aux_level), (\"log(SalePrice) ~ X\", aux_log)]:\n    robust = auxiliary.get_robustcov_results(cov_type=\"HC1\", use_t=True)\n    position = auxiliary.model.exog_names.index(\"alternative\")\n    comparison_rows.append({\"Нульова специфікація\": name,\n                            \"t звичайний\": auxiliary.tvalues[\"alternative\"],\n                            \"p звичайне\": auxiliary.pvalues[\"alternative\"],\n                            \"t HC1\": robust.tvalues[position], \"p HC1\": robust.pvalues[position]})",
+          "source": "for name, auxiliary in [(\"SalePrice ~ X\", aux_level), (\"log(SalePrice) ~ X\", aux_log)]:\n    robust = auxiliary.get_robustcov_results(cov_type=\"HC1\", use_t=True)\n    position = auxiliary.model.exog_names.index(\"alternative\")\n    comparison_rows.append({\"Нульова специфікація\": name,\n                            \"t звичайний\": auxiliary.tvalues[\"alternative\"],\n                            \"p звичайне\": auxiliary.pvalues[\"alternative\"],\n                            \"t HC1\": robust.tvalues[position], \"p HC1\": robust.pvalues[position]})"
+        },
+        {
+          "cell": 32,
+          "prefix": "jacobian =",
+          "statement": "jacobian = np.log(y).sum()",
+          "source": "# AIC/BIC лог-моделі переводимо до щільності самої ціни через якобіан 1/y.\njacobian = np.log(y).sum()"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: збирання таблиць тесту та AIC/BIC з поправкою (виводи нижче)."
+      ]
+    },
+    "p5-c35": {
+      "problem": 5,
+      "parts": [
+        {
+          "cell": 35,
+          "prefix": "X_full_cv =",
+          "statement": "X_full_cv = X_full.drop(columns=\"const\")",
+          "source": "X_full_cv = X_full.drop(columns=\"const\")        # LinearRegression сама додає константу"
+        },
+        {
+          "cell": 35,
+          "prefix": "X_selected_cv =",
+          "statement": "X_selected_cv = X_selected.drop(columns=\"const\")",
+          "source": "X_selected_cv = X_selected.drop(columns=\"const\")"
+        },
+        {
+          "cell": 35,
+          "prefix": "splitters =",
+          "statement": "splitters = {\"LeaveOneOut\": LeaveOneOut(),\n             \"KFold (5 блоків)\": KFold(n_splits=5, shuffle=True, random_state=SEED)}",
+          "source": "splitters = {\"LeaveOneOut\": LeaveOneOut(),\n             \"KFold (5 блоків)\": KFold(n_splits=5, shuffle=True, random_state=SEED)}"
+        },
+        {
+          "cell": 35,
+          "prefix": "models =",
+          "statement": "models = {\"Повна\": (X_full_cv, full_model), \"Після відбору\": (X_selected_cv, selected_model)}",
+          "source": "models = {\"Повна\": (X_full_cv, full_model), \"Після відбору\": (X_selected_cv, selected_model)}"
+        },
+        {
+          "cell": 35,
+          "prefix": "cv_rows, cv_errors =",
+          "statement": "cv_rows, cv_errors = [], {}",
+          "source": "cv_rows, cv_errors = [], {}"
+        },
+        {
+          "cell": 35,
+          "prefix": "for scheme, splitter",
+          "statement": "for scheme, splitter in splitters.items():\n    for name, (X_cv, fitted_model) in models.items():\n        prediction = cross_val_predict(LinearRegression(), X_cv, y, cv=splitter, n_jobs=-1)\n        cv_errors[(scheme, name)] = y - prediction\n        mse = np.mean((y - prediction) ** 2)\n        cv_rows.append({\"Схема\": scheme, \"Модель\": name, \"Параметрів\": X_cv.shape[1] + 1,\n                        \"MSE навчальне, дол.²\": fitted_model.ssr / n_obs,\n                        \"MSE крос-валідації, дол.²\": mse, \"RMSE, дол.\": np.sqrt(mse)})",
+          "source": "# cross_val_predict навчає модель без тестового блоку і прогнозує саме його.\nfor scheme, splitter in splitters.items():\n    for name, (X_cv, fitted_model) in models.items():\n        prediction = cross_val_predict(LinearRegression(), X_cv, y, cv=splitter, n_jobs=-1)\n        cv_errors[(scheme, name)] = y - prediction\n        mse = np.mean((y - prediction) ** 2)\n        cv_rows.append({\"Схема\": scheme, \"Модель\": name, \"Параметрів\": X_cv.shape[1] + 1,\n                        \"MSE навчальне, дол.²\": fitted_model.ssr / n_obs,\n                        \"MSE крос-валідації, дол.²\": mse, \"RMSE, дол.\": np.sqrt(mse)})"
+        },
+        {
+          "cell": 35,
+          "prefix": "cv_results =",
+          "statement": "cv_results = pd.DataFrame(cv_rows)",
+          "source": "cv_results = pd.DataFrame(cv_rows)"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: assert збігу LinearRegression і OLS, найбільші помилки LOO, графік."
+      ]
+    },
+    "p6-c6": {
+      "problem": 6,
+      "parts": [
+        {
+          "cell": 4,
+          "prefix": "from scipy.optimize",
+          "statement": "from scipy.optimize import curve_fit",
+          "source": "from scipy.optimize import curve_fit"
+        },
+        {
+          "cell": 4,
+          "prefix": "df_500 =",
+          "statement": "df_500 = df.iloc[:500].copy()",
+          "source": "# За умовою беремо перші 500 рядків файлу.\ndf_500 = df.iloc[:500].copy()"
+        },
+        {
+          "cell": 4,
+          "prefix": "x =",
+          "statement": "x = df_500[\"YearBuilt\"].to_numpy(dtype=float)",
+          "source": "x = df_500[\"YearBuilt\"].to_numpy(dtype=float)"
+        },
+        {
+          "cell": 4,
+          "prefix": "y =",
+          "statement": "y = df_500[\"SalePrice\"].to_numpy(dtype=float)",
+          "source": "y = df_500[\"SalePrice\"].to_numpy(dtype=float)"
+        },
+        {
+          "cell": 4,
+          "prefix": "n =",
+          "statement": "n = len(y)",
+          "source": "n = len(y)"
+        },
+        {
+          "cell": 6,
+          "prefix": "linear_model =",
+          "statement": "linear_model = smf.ols(\"SalePrice ~ YearBuilt\", data=df_500).fit()",
+          "source": "# МНК через формулу statsmodels; fittedvalues - прогнози на тих самих 500 продажах.\nlinear_model = smf.ols(\"SalePrice ~ YearBuilt\", data=df_500).fit()"
+        },
+        {
+          "cell": 6,
+          "prefix": "linear_pred =",
+          "statement": "linear_pred = linear_model.fittedvalues.to_numpy()",
+          "source": "linear_pred = linear_model.fittedvalues.to_numpy()"
+        },
+        {
+          "cell": 6,
+          "prefix": "years =",
+          "statement": "years = np.linspace(x.min(), x.max(), 300)",
+          "source": "years = np.linspace(x.min(), x.max(), 300)"
+        },
+        {
+          "cell": 6,
+          "prefix": "fig, ax =",
+          "statement": "fig, ax = plt.subplots(figsize=(9, 5))",
+          "source": "fig, ax = plt.subplots(figsize=(9, 5))"
+        },
+        {
+          "cell": 6,
+          "prefix": "ax.scatter",
+          "statement": "ax.scatter(x, y, s=10, alpha=0.4, label=\"Продажі (перші 500)\")",
+          "source": "ax.scatter(x, y, s=10, alpha=0.4, label=\"Продажі (перші 500)\")"
+        },
+        {
+          "cell": 6,
+          "prefix": "ax.plot",
+          "statement": "ax.plot(years, linear_model.params[\"Intercept\"] + linear_model.params[\"YearBuilt\"] * years,\n        color=\"red\", label=\"Лінійна регресія\")",
+          "source": "ax.plot(years, linear_model.params[\"Intercept\"] + linear_model.params[\"YearBuilt\"] * years,\n        color=\"red\", label=\"Лінійна регресія\")"
+        },
+        {
+          "cell": 6,
+          "prefix": "plt.show()",
+          "statement": "plt.show()",
+          "source": "plt.show()"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: describe(), роки продажу, таблиці оцінок і залишків, оформлення графіка."
+      ]
+    },
+    "p6-c9": {
+      "problem": 6,
+      "parts": [
+        {
+          "cell": 9,
+          "prefix": "YEAR_0 =",
+          "statement": "YEAR_0 = 1970",
+          "source": "YEAR_0 = 1970  # опорний рік: a - прогноз ціни будинку, збудованого в 1970 р."
+        },
+        {
+          "cell": 9,
+          "prefix": "def exponential",
+          "statement": "def exponential(year, a, b):\n    \"\"\"SalePrice = a * exp(b * (YearBuilt - 1970)).\"\"\"\n    return a * np.exp(b * (year - YEAR_0))",
+          "source": "def exponential(year, a, b):\n    \"\"\"SalePrice = a * exp(b * (YearBuilt - 1970)).\"\"\"\n    return a * np.exp(b * (year - YEAR_0))"
+        },
+        {
+          "cell": 9,
+          "prefix": "log_fit =",
+          "statement": "log_fit = sm.OLS(np.log(y), sm.add_constant(x - YEAR_0)).fit()",
+          "source": "# Початкові значення: якщо log(SalePrice) = log(a) + b * (YearBuilt - 1970),\n# то їх дає звичайна лінійна регресія логарифма ціни.\nlog_fit = sm.OLS(np.log(y), sm.add_constant(x - YEAR_0)).fit()"
+        },
+        {
+          "cell": 9,
+          "prefix": "p0 =",
+          "statement": "p0 = [np.exp(log_fit.params[0]), log_fit.params[1]]",
+          "source": "p0 = [np.exp(log_fit.params[0]), log_fit.params[1]]"
+        },
+        {
+          "cell": 9,
+          "prefix": "params, pcov =",
+          "statement": "params, pcov = curve_fit(exponential, x, y, p0=p0)",
+          "source": "params, pcov = curve_fit(exponential, x, y, p0=p0)"
+        },
+        {
+          "cell": 9,
+          "prefix": "a_hat, b_hat =",
+          "statement": "a_hat, b_hat = params",
+          "source": "a_hat, b_hat = params"
+        },
+        {
+          "cell": 9,
+          "prefix": "exp_pred =",
+          "statement": "exp_pred = exponential(x, a_hat, b_hat)",
+          "source": "exp_pred = exponential(x, a_hat, b_hat)"
+        },
+        {
+          "cell": 9,
+          "prefix": "def r_squared",
+          "statement": "def r_squared(prediction):\n    return 1 - np.sum((y - prediction) ** 2) / np.sum((y - y.mean()) ** 2)",
+          "source": "# R² і MSE рахуємо однаково для обох моделей на тих самих y.\ndef r_squared(prediction):\n    return 1 - np.sum((y - prediction) ** 2) / np.sum((y - y.mean()) ** 2)"
+        },
+        {
+          "cell": 9,
+          "prefix": "def mse",
+          "statement": "def mse(prediction):\n    return np.mean((y - prediction) ** 2)",
+          "source": "def mse(prediction):\n    return np.mean((y - prediction) ** 2)"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: assert R² лінійної моделі, таблиці порівняння, контрольні роки, графік."
+      ]
+    },
+    "p6-c12": {
+      "problem": 6,
+      "parts": [
+        {
+          "cell": 12,
+          "prefix": "t =",
+          "statement": "t = x - YEAR_0",
+          "source": "# curve_fit оцінює коваріацію через лінеаризацію: pcov = s^2 (J^T J)^(-1),\n# де J - похідні моделі за a і b в точці оцінки, s^2 = RSS / (n - 2).\nt = x - YEAR_0"
+        },
+        {
+          "cell": 12,
+          "prefix": "J =",
+          "statement": "J = np.column_stack([np.exp(b_hat * t), a_hat * t * np.exp(b_hat * t)])",
+          "source": "J = np.column_stack([np.exp(b_hat * t), a_hat * t * np.exp(b_hat * t)])"
+        },
+        {
+          "cell": 12,
+          "prefix": "s2 =",
+          "statement": "s2 = np.sum((y - exp_pred) ** 2) / (n - 2)",
+          "source": "s2 = np.sum((y - exp_pred) ** 2) / (n - 2)"
+        },
+        {
+          "cell": 12,
+          "prefix": "se =",
+          "statement": "se = np.sqrt(np.diag(pcov))",
+          "source": "se = np.sqrt(np.diag(pcov))"
+        },
+        {
+          "cell": 12,
+          "prefix": "z =",
+          "statement": "z = stats.norm.ppf(1 - ALPHA / 2)",
+          "source": "z = stats.norm.ppf(1 - ALPHA / 2)"
+        },
+        {
+          "cell": 12,
+          "prefix": "residuals =",
+          "statement": "residuals = y - exp_pred",
+          "source": "# Нормальність залишків NLS перевіряємо тим самим тестом Jarque-Bera.\nresiduals = y - exp_pred"
+        },
+        {
+          "cell": 12,
+          "prefix": "jb =",
+          "statement": "jb = stats.jarque_bera(residuals)",
+          "source": "jb = stats.jarque_bera(residuals)"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: assert pcov = s²(JᵀJ)⁻¹, таблиця оцінок, розкид залишків за періодами, графік."
+      ]
+    },
+    "p6-c15": {
+      "problem": 6,
+      "parts": [
+        {
+          "cell": 2,
+          "prefix": "import warnings",
+          "statement": "import warnings",
+          "source": "import warnings"
+        },
+        {
+          "cell": 15,
+          "prefix": "def exponential_raw",
+          "statement": "def exponential_raw(year, a, b):\n    return a * np.exp(b * year)",
+          "source": "# 1) Збіжність: та сама крива, але без зсуву року.\ndef exponential_raw(year, a, b):\n    return a * np.exp(b * year)"
+        },
+        {
+          "cell": 15,
+          "prefix": "with warnings.catch_warnings",
+          "statement": "with warnings.catch_warnings(record=True) as caught:\n    warnings.simplefilter(\"always\")\n    raw_default, raw_default_cov = curve_fit(exponential_raw, x, y)  # p0 = [1, 1] за замовчуванням\n    with np.errstate(over=\"ignore\"):\n        raw_default_mse = mse(exponential_raw(x, *raw_default))",
+          "source": "with warnings.catch_warnings(record=True) as caught:\n    warnings.simplefilter(\"always\")\n    raw_default, raw_default_cov = curve_fit(exponential_raw, x, y)  # p0 = [1, 1] за замовчуванням\n    with np.errstate(over=\"ignore\"):\n        raw_default_mse = mse(exponential_raw(x, *raw_default))"
+        },
+        {
+          "cell": 15,
+          "prefix": "raw_params, raw_cov =",
+          "statement": "raw_params, raw_cov = curve_fit(exponential_raw, x, y, p0=[p0[0] * np.exp(-p0[1] * YEAR_0), p0[1]])",
+          "source": "# Та сама крива без зсуву року, але з p0, перерахованим із центрованої моделі.\nraw_params, raw_cov = curve_fit(exponential_raw, x, y, p0=[p0[0] * np.exp(-p0[1] * YEAR_0), p0[1]])"
+        },
+        {
+          "cell": 15,
+          "prefix": "raw_se =",
+          "statement": "raw_se = np.sqrt(np.diag(raw_cov))",
+          "source": "raw_se = np.sqrt(np.diag(raw_cov))"
+        },
+        {
+          "cell": 15,
+          "prefix": "features =",
+          "statement": "features = df_500.drop(columns=[\"Order\", \"PID\", \"SalePrice\"])",
+          "source": "# 2) Усі пояснювальні змінні перших 500 рядків: кількість параметрів проти n.\nfeatures = df_500.drop(columns=[\"Order\", \"PID\", \"SalePrice\"])"
+        },
+        {
+          "cell": 15,
+          "prefix": "categorical =",
+          "statement": "categorical = [\"MSSubClass\"] + list(features.select_dtypes(exclude=\"number\").columns)",
+          "source": "categorical = [\"MSSubClass\"] + list(features.select_dtypes(exclude=\"number\").columns)"
+        },
+        {
+          "cell": 15,
+          "prefix": "X_all =",
+          "statement": "X_all = pd.get_dummies(features, columns=categorical, drop_first=True, dtype=float)",
+          "source": "X_all = pd.get_dummies(features, columns=categorical, drop_first=True, dtype=float)"
+        },
+        {
+          "cell": 15,
+          "prefix": "complete =",
+          "statement": "complete = X_all.notna().all(axis=1)",
+          "source": "complete = X_all.notna().all(axis=1)"
+        },
+        {
+          "cell": 15,
+          "prefix": "X_complete =",
+          "statement": "X_complete = X_all[complete]",
+          "source": "X_complete = X_all[complete]"
+        }
+      ],
+      "frame": [
+        null,
+        "# Далі: друк попереджень, таблиці порівняння параметризацій і розмірів матриці."
+      ]
+    }
+  }
+}

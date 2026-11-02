@@ -1,0 +1,115 @@
+\documentclass[11pt,a4paper]{article}
+% Editable source: compile with `sh build.sh` from this directory.
+% Values and figures come from the executed Task 3 notebooks.
+\usepackage[margin=21mm,headheight=16pt,headsep=8mm,footskip=12mm]{geometry}
+\usepackage{fontspec}
+\setmainfont{PT Serif}[Ligatures=TeX]
+\setsansfont{PT Sans}[Ligatures=TeX]
+\setmonofont{Menlo}[Scale=0.85]
+\usepackage{polyglossia}
+\setdefaultlanguage{ukrainian}
+\setotherlanguage{english}
+\newfontfamily\cyrillicfont{PT Serif}[Ligatures=TeX]
+\newfontfamily\cyrillicfontsf{PT Sans}[Ligatures=TeX]
+\newfontfamily\cyrillicfonttt{Menlo}[Scale=0.85]
+\usepackage{amsmath,amssymb,calc}
+\usepackage{graphicx,float,booktabs,longtable,array}
+\usepackage{xcolor}
+\definecolor{accent}{HTML}{244A64}
+
+% The editable Python sources live in code/. build.sh highlights them with Pygments.
+\usepackage{fvextra}
+\usepackage[most]{tcolorbox}
+\input{generated/style.tex}
+\definecolor{answergreen}{HTML}{285C48}
+\newtcolorbox{taskstatement}{enhanced,
+  colback=accent!4!white,colframe=accent!35!white,colbacktitle=accent!10!white,
+  coltitle=accent,fonttitle=\bfseries,title=Умова завдання,
+  boxrule=0.4pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm,
+  before skip=6pt,after skip=8pt}
+\RecustomVerbatimEnvironment{Verbatim}{Verbatim}{
+  fontsize=\fontsize{9}{11}\selectfont,breaklines=true,breakanywhere=true,breakindent=2em,
+  breaksymbolleft={},breaksymbolright={},numbers=left,numbersep=6pt,xleftmargin=4mm}
+\renewcommand{\theFancyVerbLine}{\sffamily\scriptsize\color{gray}\arabic{FancyVerbLine}}
+% Listings up to about 32 lines stay in one piece; longer ones may break, never leaving a one-line tail.
+\newcommand{\pythoncode}[1]{%
+  \Needspace{6\baselineskip}
+  \begin{tcolorbox}[enhanced,colback=black!2!white,colframe=black!15!white,
+    colbacktitle=black!6!white,coltitle=accent,fonttitle=\bfseries\small,
+    title=Код Python,title after break={Код Python (продовження)},boxrule=0.4pt,arc=1mm,left=2mm,right=2mm,top=2mm,bottom=2mm,
+    before skip=4pt,after skip=1pt]
+  \input{generated/#1.tex}
+  \end{tcolorbox}}
+\newcommand{\pythoncodelong}[1]{%
+  \Needspace{6\baselineskip}
+  \begin{tcolorbox}[enhanced,breakable,lines before break=4,colback=black!2!white,colframe=black!15!white,
+    colbacktitle=black!6!white,coltitle=accent,fonttitle=\bfseries\small,
+    title=Код Python,title after break={Код Python (продовження)},boxrule=0.4pt,arc=1mm,left=2mm,right=2mm,top=2mm,bottom=2mm,
+    before skip=4pt,after skip=1pt]
+  \input{generated/#1.tex}
+  \end{tcolorbox}}
+\newcommand{\answerheading}{\Needspace{4\baselineskip}\par\medskip
+  {\color{answergreen}\bfseries Результати та інтерпретація}\par\smallskip}
+
+\usepackage{titlesec}
+\usepackage{needspace}
+\pretocmd{\subsection}{\Needspace{8\baselineskip}}{}{}
+% A task heading stays with the first sub-task heading and its statement.
+\pretocmd{\section}{\Needspace{32\baselineskip}}{}{}
+\titleformat{\section}{\Large\bfseries\color{accent}}{}{0em}{}
+\titleformat{\subsection}{\large\bfseries}{}{0em}{}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Statistics and Econometrics}
+\fancyhead[R]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\sectionmark}[1]{}% the exported sources set the running head explicitly
+\setcounter{secnumdepth}{0}% the assignment's own numbering (1)–(11), (а)–(г) is kept in the titles
+\renewcommand{\headrulewidth}{0.3pt}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+\usepackage{xurl}
+\usepackage{hyperref}
+\hypersetup{unicode=true,colorlinks=true,linkcolor=accent,urlcolor=accent,
+  pdftitle={Завдання 3. Лінійна та нелінійна регресія},pdfauthor={Владислав Григола}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.3em}
+\setlength{\LTpre}{2pt}
+\setlength{\LTpost}{3pt}
+\setlength{\emergencystretch}{2em}
+\linespread{1.02}
+\raggedbottom
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\newcommand{\resultnote}[1]{{\par\nopagebreak\vspace{-2pt}\fontsize{7.8}{9.2}\selectfont\itshape\color{black!60}#1\par\vspace{2pt}}}
+\newcommand{\resulttext}[1]{%
+  \par\begingroup\setlength{\topsep}{2pt}\setlength{\partopsep}{0pt}\setlength{\parskip}{0pt}\VerbatimInput[fontsize=\fontsize{7.8}{9.2}\selectfont,
+    breaklines=true,breakanywhere=true,breaksymbolleft={},breaksymbolright={},numbers=none,xleftmargin=0pt]{generated/#1}\endgroup}
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+\vspace*{14mm}
+{\Large Український католицький університет\par}
+\vspace{9mm}
+{\large Statistics and Econometrics\par}
+\vfill
+{\huge\bfseries\color{accent} Завдання 3.\par}
+\vspace{4mm}
+{\huge\bfseries\color{accent} Лінійна та нелінійна регресія\par}
+\vspace{10mm}
+{\large Задачі 5 і 6\par}
+\vfill
+{\large Виконав: \textbf{Владислав Григола}\par}
+\vspace{22mm}
+{\large 2026\par}
+\end{titlepage}
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+\markboth{Зміст}{}
+\tableofcontents
+\clearpage
+\input{generated/problem5.tex}
+\input{generated/problem6.tex}
+\end{document}

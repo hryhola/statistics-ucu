@@ -1,0 +1,33 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: assert, що TotalBsmtSF і GrLivArea є сумами інших площ.}
+\PY{c+c1}{\PYZsh{} Зберігаємо повні блоки кожної початкової змінної, навіть якщо індикатори збігаються.}
+\PY{c+c1}{\PYZsh{} BldgType перед MSSubClass: спільний індикатор Duplex належить контрольній змінній.}
+\PY{n}{category\PYZus{}order} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BldgType}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+} \PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n}{categorical} \PY{k}{if} \PY{n}{c} \PY{o}{!=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BldgType}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{groups} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{column}\PY{p}{:} \PY{p}{[}\PY{n}{column}\PY{p}{]} \PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{numeric}\PY{p}{\PYZcb{}}
+\PY{n}{blocks} \PY{o}{=} \PY{p}{[}\PY{n}{analysis}\PY{p}{[}\PY{n}{numeric}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{]}
+\PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{category\PYZus{}order}\PY{p}{:}
+    \PY{n}{dummies} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{analysis}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{p}{,} \PY{n}{prefix}\PY{o}{=}\PY{n}{column}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{dummies} \PY{o}{=} \PY{n}{dummies}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{column}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZus{}}\PY{l+s+si}{\PYZob{}}\PY{n}{analysis}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{mode}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{groups}\PY{p}{[}\PY{n}{column}\PY{p}{]} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{dummies}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{blocks}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dummies}\PY{p}{)}
+\PY{n}{X\PYZus{}encoded} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{n}{blocks}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{design\PYZus{}matrix}\PY{p}{(}\PY{n}{active}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Матриця активних змінних: прибираємо копії лише в цій моделі.\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{columns} \PY{o}{=} \PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{group} \PY{o+ow}{in} \PY{n}{active} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n}{groups}\PY{p}{[}\PY{n}{group}\PY{p}{]}\PY{p}{]}
+    \PY{n}{X} \PY{o}{=} \PY{n}{X\PYZus{}encoded}\PY{p}{[}\PY{n}{columns}\PY{p}{]}
+    \PY{k}{return} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{o}{\PYZti{}}\PY{n}{X}\PY{o}{.}\PY{n}{T}\PY{o}{.}\PY{n}{duplicated}\PY{p}{(}\PY{p}{)}\PY{p}{]}\PY{p}{,} \PY{n}{has\PYZus{}constant}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{add}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{X\PYZus{}full} \PY{o}{=} \PY{n}{design\PYZus{}matrix}\PY{p}{(}\PY{n+nb}{list}\PY{p}{(}\PY{n}{groups}\PY{p}{)}\PY{p}{)}
+\PY{n}{y} \PY{o}{=} \PY{n}{analysis}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}
+\PY{n}{full\PYZus{}model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X\PYZus{}full}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Коефіцієнти MSSubClass, які справді оцінюються (без копії індикатора дуплексу).}
+\PY{n}{dummy\PYZus{}names} \PY{o}{=} \PY{p}{[}\PY{n}{name} \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{X\PYZus{}full}\PY{o}{.}\PY{n}{columns} \PY{k}{if} \PY{n}{name}\PY{o}{.}\PY{n}{startswith}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSSubClass\PYZus{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{]}
+\PY{n}{q}\PY{p}{,} \PY{n}{k} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{dummy\PYZus{}names}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}full}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}
+\PY{n}{positions} \PY{o}{=} \PY{n}{X\PYZus{}full}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{get\PYZus{}indexer}\PY{p}{(}\PY{n}{dummy\PYZus{}names}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Матриця обмежень: один рядок на кожен коефіцієнт MSSubClass; вектор r = 0.}
+\PY{n}{R} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n}{q}\PY{p}{,} \PY{n}{k}\PY{p}{)}\PY{p}{)}
+\PY{n}{R}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{arange}\PY{p}{(}\PY{n}{q}\PY{p}{)}\PY{p}{,} \PY{n}{positions}\PY{p}{]} \PY{o}{=} \PY{l+m+mi}{1}
+\PY{n}{r} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{q}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} f\PYZus{}test() перевіряє H0: R beta = r у повній моделі.}
+\PY{n}{f\PYZus{}result} \PY{o}{=} \PY{n}{full\PYZus{}model}\PY{o}{.}\PY{n}{f\PYZus{}test}\PY{p}{(}\PY{p}{(}\PY{n}{R}\PY{p}{,} \PY{n}{r}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: assert рангу, модель без MSSubClass, ручний F і assert збігу з f\PYZus{}test().}
+\end{Verbatim}

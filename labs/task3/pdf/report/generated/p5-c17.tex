@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Та сама матриця X\PYZus{}full, але відгук \PYZhy{} log(SalePrice).}
+\PY{n}{full\PYZus{}log\PYZus{}model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}full}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{first\PYZus{}dummy} \PY{o}{=} \PY{n}{dummy\PYZus{}names}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{terms} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{first\PYZus{}dummy}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BedroomAbvGr}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{gamma} \PY{o}{=} \PY{n}{full\PYZus{}log\PYZus{}model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{terms}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Далі: збирання таблиць коефіцієнтів і років побудови класів 20 і 30 (виводи нижче).}
+\end{Verbatim}

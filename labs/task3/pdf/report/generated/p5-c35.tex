@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{X\PYZus{}full\PYZus{}cv} \PY{o}{=} \PY{n}{X\PYZus{}full}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}        \PY{c+c1}{\PYZsh{} LinearRegression сама додає константу}
+\PY{n}{X\PYZus{}selected\PYZus{}cv} \PY{o}{=} \PY{n}{X\PYZus{}selected}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{splitters} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LeaveOneOut}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{LeaveOneOut}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+             \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{KFold (5 блоків)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{KFold}\PY{p}{(}\PY{n}{n\PYZus{}splits}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{shuffle}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}\PY{p}{\PYZcb{}}
+\PY{n}{models} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Повна}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{(}\PY{n}{X\PYZus{}full\PYZus{}cv}\PY{p}{,} \PY{n}{full\PYZus{}model}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Після відбору}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{(}\PY{n}{X\PYZus{}selected\PYZus{}cv}\PY{p}{,} \PY{n}{selected\PYZus{}model}\PY{p}{)}\PY{p}{\PYZcb{}}
+\PY{n}{cv\PYZus{}rows}\PY{p}{,} \PY{n}{cv\PYZus{}errors} \PY{o}{=} \PY{p}{[}\PY{p}{]}\PY{p}{,} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+\PY{c+c1}{\PYZsh{} cross\PYZus{}val\PYZus{}predict навчає модель без тестового блоку і прогнозує саме його.}
+\PY{k}{for} \PY{n}{scheme}\PY{p}{,} \PY{n}{splitter} \PY{o+ow}{in} \PY{n}{splitters}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{name}\PY{p}{,} \PY{p}{(}\PY{n}{X\PYZus{}cv}\PY{p}{,} \PY{n}{fitted\PYZus{}model}\PY{p}{)} \PY{o+ow}{in} \PY{n}{models}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{prediction} \PY{o}{=} \PY{n}{cross\PYZus{}val\PYZus{}predict}\PY{p}{(}\PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}cv}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{cv}\PY{o}{=}\PY{n}{splitter}\PY{p}{,} \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}
+        \PY{n}{cv\PYZus{}errors}\PY{p}{[}\PY{p}{(}\PY{n}{scheme}\PY{p}{,} \PY{n}{name}\PY{p}{)}\PY{p}{]} \PY{o}{=} \PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{prediction}
+        \PY{n}{mse} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{(}\PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{prediction}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+        \PY{n}{cv\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Схема}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{scheme}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Модель}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{name}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Параметрів}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{X\PYZus{}cv}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,}
+                        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSE навчальне, дол.²}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{fitted\PYZus{}model}\PY{o}{.}\PY{n}{ssr} \PY{o}{/} \PY{n}{n\PYZus{}obs}\PY{p}{,}
+                        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSE крос\PYZhy{}валідації, дол.²}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mse}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RMSE, дол.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{mse}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{cv\PYZus{}results} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{cv\PYZus{}rows}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: assert збігу LinearRegression і OLS, найбільші помилки LOO, графік.}
+\end{Verbatim}

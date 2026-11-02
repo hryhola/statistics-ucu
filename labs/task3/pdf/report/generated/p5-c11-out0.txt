@@ -1,0 +1,27 @@
+OLS Regression Results                            
+==============================================================================
+Dep. Variable:              SalePrice   R-squared:                       0.071
+Model:                            OLS   Adj. R-squared:                  0.071
+Method:                 Least Squares   F-statistic:                     223.9
+Date:                Mon, 02 Nov 2026   Prob (F-statistic):           7.63e-49
+Time:                        19:59:53   Log-Likelihood:                -37124.
+No. Observations:                2930   AIC:                         7.425e+04
+Df Residuals:                    2928   BIC:                         7.426e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const       1.534e+05   2319.909     66.112      0.000    1.49e+05    1.58e+05
+LotArea        2.7022      0.181     14.965      0.000       2.348       3.056
+==============================================================================
+Omnibus:                      981.022   Durbin-Watson:                   0.771
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             4394.498
+Skew:                           1.561   Prob(JB):                         0.00
+Kurtosis:                       8.124   Cond. No.                     2.09e+04
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 2.09e+04. This might indicate that there are
+strong multicollinearity or other numerical problems.

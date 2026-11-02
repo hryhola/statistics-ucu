@@ -1,0 +1,3 @@
+Вилучені копії стовпців: ['BsmtCond_NA', 'BsmtExposure_NA', 'BsmtFinType1_NA', 'BsmtFinType2_NA', 'Exterior2nd_PreCast', 'GarageCond_NA', 'GarageFinish_NA', 'GarageQual_NA', 'MSSubClass_90', 'Utilities_NoSewr']
+Повна модель: n = 2414, k = 269 параметрів, R² = 0.9399, скоригований R² = 0.9324
+R має розмір 13x269; одиниці в стовпцях [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49] (рахуючи з 0); r = 0 розміру 13

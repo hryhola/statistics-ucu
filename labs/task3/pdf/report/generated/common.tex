@@ -1,0 +1,22 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти бібліотек, шляхи до файлів, налаштування графіків.}
+\PY{n}{SEED} \PY{o}{=} \PY{l+m+mi}{42}
+\PY{n}{ALPHA} \PY{o}{=} \PY{l+m+mf}{0.05}
+\PY{n}{rng} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{default\PYZus{}rng}\PY{p}{(}\PY{n}{SEED}\PY{p}{)}
+\PY{n}{DATA\PYZus{}PATH} \PY{o}{=} \PY{n}{INPUT\PYZus{}DIR} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{AmesHousing.txt}\PY{l+s+s2}{\PYZdq{}}
+\PY{c+c1}{\PYZsh{} Пропуск \PYZhy{} лише порожнє поле; текст \PYZdq{}NA\PYZdq{} лишається значенням категорії.}
+\PY{n}{df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{DATA\PYZus{}PATH}\PY{p}{,} \PY{n}{sep}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+se}{\PYZbs{}t}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{keep\PYZus{}default\PYZus{}na}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{na\PYZus{}values}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Назви як у Kaggle та в умові: \PYZdq{}Lot Area\PYZdq{} \PYZhy{}\PYZgt{} \PYZdq{}LotArea\PYZdq{}, \PYZdq{}Year Remod/Add\PYZdq{} \PYZhy{}\PYZgt{} \PYZdq{}YearRemodAdd\PYZdq{}.}
+\PY{n}{df}\PY{o}{.}\PY{n}{columns} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{replace}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{/}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{text\PYZus{}columns} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{exclude}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{number}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{text\PYZus{}columns}\PY{p}{:}
+    \PY{n}{df}\PY{p}{[}\PY{n}{column}\PY{p}{]} \PY{o}{=} \PY{n}{df}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{str}\PY{o}{.}\PY{n}{strip}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} у SaleType є зайві пробіли, напр. \PYZdq{}WD \PYZdq{}}
+\PY{c+c1}{\PYZsh{} MSSubClass і текстові колонки \PYZhy{} категорії; рядок \PYZdq{}NA\PYZdq{} в них \PYZhy{} окремий рівень.}
+\PY{n}{categorical} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSSubClass}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+} \PY{n}{text\PYZus{}columns}
+\PY{c+c1}{\PYZsh{} Order, PID \PYZhy{} ідентифікатори; GarageYrBlt не існує для будинків без гаража;}
+\PY{c+c1}{\PYZsh{} TotalBsmtSF і GrLivArea \PYZhy{} точні суми інших площ (див. пункт 4).}
+\PY{n}{excluded} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Order}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{PID}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{GarageYrBlt}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TotalBsmtSF}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{GrLivArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{numeric} \PY{o}{=} \PY{p}{[}\PY{n}{column} \PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{df}\PY{o}{.}\PY{n}{columns} \PY{k}{if} \PY{n}{column} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{categorical} \PY{o}{+} \PY{n}{excluded}\PY{p}{]}
+\PY{n}{analysis} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{subset}\PY{o}{=}\PY{n}{numeric} \PY{o}{+} \PY{n}{categorical}\PY{p}{)}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: розмір df, кількість пропусків і структурних рівнів \PYZdq{}NA\PYZdq{}.}
+\end{Verbatim}

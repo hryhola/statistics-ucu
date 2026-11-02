@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Повний df: усі 2930 рядків і всі колонки. Ховаємо LotArea у 5 випадкових рядках.}
+\PY{n}{masked\PYZus{}index} \PY{o}{=} \PY{n}{rng}\PY{o}{.}\PY{n}{choice}\PY{p}{(}\PY{n}{df}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{n}{size}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{replace}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{true\PYZus{}lotarea} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{masked\PYZus{}index}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{df\PYZus{}missing} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{n}{df\PYZus{}missing}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{df\PYZus{}missing}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}
+\PY{n}{df\PYZus{}missing}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{masked\PYZus{}index}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan}
+\PY{c+c1}{\PYZsh{} Заповнюємо лише числові NaN. Категоріальні \PYZdq{}NA\PYZdq{} не чіпаємо; GarageYrBlt без гаража}
+\PY{c+c1}{\PYZsh{} не є пропуском; MSSubClass \PYZhy{} коди категорій; SalePrice \PYZhy{} відгук, який пояснюємо.}
+\PY{n}{impute\PYZus{}columns} \PY{o}{=} \PY{p}{[}\PY{n}{c} \PY{k}{for} \PY{n}{c} \PY{o+ow}{in} \PY{n}{df}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{number}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{columns}
+                  \PY{k}{if} \PY{n}{c} \PY{o+ow}{not} \PY{o+ow}{in} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Order}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{PID}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSSubClass}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{GarageYrBlt}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Підхід 1: медіана колонки. Підхід 2: кожну колонку з пропусками регресуємо на решту.}
+\PY{n}{median\PYZus{}filled} \PY{o}{=} \PY{n}{df\PYZus{}missing}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{n}{median\PYZus{}filled}\PY{p}{[}\PY{n}{impute\PYZus{}columns}\PY{p}{]} \PY{o}{=} \PY{n}{SimpleImputer}\PY{p}{(}\PY{n}{strategy}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{df\PYZus{}missing}\PY{p}{[}\PY{n}{impute\PYZus{}columns}\PY{p}{]}\PY{p}{)}
+\PY{n}{iterative\PYZus{}filled} \PY{o}{=} \PY{n}{df\PYZus{}missing}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{n}{iterative\PYZus{}filled}\PY{p}{[}\PY{n}{impute\PYZus{}columns}\PY{p}{]} \PY{o}{=} \PY{n}{IterativeImputer}\PY{p}{(}\PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{25}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{df\PYZus{}missing}\PY{p}{[}\PY{n}{impute\PYZus{}columns}\PY{p}{]}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці порівняння з істинними значеннями; assert, що змінено лише пропуски.}
+\end{Verbatim}

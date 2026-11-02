@@ -1,0 +1,1 @@
+RoofMatl.value_counts(): {'CompShg': 2384, 'Tar&Grv': 15, 'WdShngl': 7, 'WdShake': 5, 'Membran': 1, 'ClyTile': 1, 'Roll': 1}

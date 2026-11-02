@@ -1,0 +1,1 @@
+Тип MSSubClass у DataFrame: int64

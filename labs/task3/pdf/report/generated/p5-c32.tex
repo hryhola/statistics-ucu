@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{level\PYZus{}model} \PY{o}{=} \PY{n}{selected\PYZus{}model}
+\PY{n}{log\PYZus{}model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}selected}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{n\PYZus{}obs} \PY{o}{=} \PY{n+nb}{len}\PY{p}{(}\PY{n}{y}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Двостороннє порівняння через штучні регресори (тест Девідсона–Маккіннона).}
+\PY{c+c1}{\PYZsh{} Прогнози альтернативної моделі переводимо в шкалу залежної змінної.}
+\PY{k}{assert} \PY{p}{(}\PY{n}{level\PYZus{}model}\PY{o}{.}\PY{n}{fittedvalues} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{)}\PY{o}{.}\PY{n}{all}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} без цього log(прогнозу) не визначений}
+\PY{n}{aux\PYZus{}level} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{X\PYZus{}selected}\PY{o}{.}\PY{n}{assign}\PY{p}{(}\PY{n}{alternative}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{log\PYZus{}model}\PY{o}{.}\PY{n}{fittedvalues}\PY{p}{)} \PY{o}{/} \PY{l+m+mi}{1000}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{aux\PYZus{}log} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}selected}\PY{o}{.}\PY{n}{assign}\PY{p}{(}\PY{n}{alternative}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{level\PYZus{}model}\PY{o}{.}\PY{n}{fittedvalues}\PY{p}{)}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{comparison\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{name}\PY{p}{,} \PY{n}{auxiliary} \PY{o+ow}{in} \PY{p}{[}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice \PYZti{} X}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{aux\PYZus{}level}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{log(SalePrice) \PYZti{} X}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{aux\PYZus{}log}\PY{p}{)}\PY{p}{]}\PY{p}{:}
+    \PY{n}{robust} \PY{o}{=} \PY{n}{auxiliary}\PY{o}{.}\PY{n}{get\PYZus{}robustcov\PYZus{}results}\PY{p}{(}\PY{n}{cov\PYZus{}type}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HC1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{use\PYZus{}t}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+    \PY{n}{position} \PY{o}{=} \PY{n}{auxiliary}\PY{o}{.}\PY{n}{model}\PY{o}{.}\PY{n}{exog\PYZus{}names}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{alternative}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{comparison\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Нульова специфікація}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{name}\PY{p}{,}
+                            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{t звичайний}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{auxiliary}\PY{o}{.}\PY{n}{tvalues}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{alternative}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+                            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p звичайне}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{auxiliary}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{alternative}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+                            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{t HC1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{robust}\PY{o}{.}\PY{n}{tvalues}\PY{p}{[}\PY{n}{position}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{p HC1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{robust}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{n}{position}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} AIC/BIC лог\PYZhy{}моделі переводимо до щільності самої ціни через якобіан 1/y.}
+\PY{n}{jacobian} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: збирання таблиць тесту та AIC/BIC з поправкою (виводи нижче).}
+\end{Verbatim}

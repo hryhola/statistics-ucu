@@ -1,0 +1,19 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{YEAR\PYZus{}0} \PY{o}{=} \PY{l+m+mi}{1970}  \PY{c+c1}{\PYZsh{} опорний рік: a \PYZhy{} прогноз ціни будинку, збудованого в 1970 р.}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{exponential}\PY{p}{(}\PY{n}{year}\PY{p}{,} \PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}SalePrice = a * exp(b * (YearBuilt \PYZhy{} 1970)).\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{k}{return} \PY{n}{a} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{b} \PY{o}{*} \PY{p}{(}\PY{n}{year} \PY{o}{\PYZhy{}} \PY{n}{YEAR\PYZus{}0}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Початкові значення: якщо log(SalePrice) = log(a) + b * (YearBuilt \PYZhy{} 1970),}
+\PY{c+c1}{\PYZsh{} то їх дає звичайна лінійна регресія логарифма ціни.}
+\PY{n}{log\PYZus{}fit} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{log}\PY{p}{(}\PY{n}{y}\PY{p}{)}\PY{p}{,} \PY{n}{sm}\PY{o}{.}\PY{n}{add\PYZus{}constant}\PY{p}{(}\PY{n}{x} \PY{o}{\PYZhy{}} \PY{n}{YEAR\PYZus{}0}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{n}{p0} \PY{o}{=} \PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{log\PYZus{}fit}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{log\PYZus{}fit}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}
+\PY{n}{params}\PY{p}{,} \PY{n}{pcov} \PY{o}{=} \PY{n}{curve\PYZus{}fit}\PY{p}{(}\PY{n}{exponential}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{p0}\PY{o}{=}\PY{n}{p0}\PY{p}{)}
+\PY{n}{a\PYZus{}hat}\PY{p}{,} \PY{n}{b\PYZus{}hat} \PY{o}{=} \PY{n}{params}
+\PY{n}{exp\PYZus{}pred} \PY{o}{=} \PY{n}{exponential}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{a\PYZus{}hat}\PY{p}{,} \PY{n}{b\PYZus{}hat}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} R² і MSE рахуємо однаково для обох моделей на тих самих y.}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{r\PYZus{}squared}\PY{p}{(}\PY{n}{prediction}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{prediction}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{y}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{mse}\PY{p}{(}\PY{n}{prediction}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{(}\PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{prediction}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: assert R² лінійної моделі, таблиці порівняння, контрольні роки, графік.}
+\end{Verbatim}

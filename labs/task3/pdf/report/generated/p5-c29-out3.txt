@@ -1,0 +1,1 @@
+LotFrontage: медіана = 68.0 | IterativeImputer, діапазон заповнених: {'min': 44.7, 'median': 70.6, 'max': 258.7}

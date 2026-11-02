@@ -1,0 +1,27 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{backward\PYZus{}bic}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{groups}\PY{p}{)}\PY{p}{:}
+\PY{+w}{    }\PY{l+s+sd}{\PYZdq{}\PYZdq{}\PYZdq{}Зворотний відбір початкових змінних за BIC.\PYZdq{}\PYZdq{}\PYZdq{}}
+    \PY{n}{active} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{groups}\PY{p}{)}
+    \PY{n}{model} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{design\PYZus{}matrix}\PY{p}{(}\PY{n}{active}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+    \PY{n}{history} \PY{o}{=} \PY{p}{[}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Крок}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Вилучено}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{int}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{df\PYZus{}model} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model}\PY{o}{.}\PY{n}{bic}\PY{p}{\PYZcb{}}\PY{p}{]}
+    \PY{k}{while} \PY{n}{active}\PY{p}{:}
+        \PY{n}{best\PYZus{}group}\PY{p}{,} \PY{n}{best\PYZus{}model} \PY{o}{=} \PY{k+kc}{None}\PY{p}{,} \PY{k+kc}{None}
+        \PY{c+c1}{\PYZsh{} Пробуємо вилучити кожну змінну окремо; запам’ятовуємо кандидата з найменшим BIC.}
+        \PY{k}{for} \PY{n}{group} \PY{o+ow}{in} \PY{n}{active}\PY{p}{:}
+            \PY{n}{remaining} \PY{o}{=} \PY{p}{[}\PY{n}{g} \PY{k}{for} \PY{n}{g} \PY{o+ow}{in} \PY{n}{active} \PY{k}{if} \PY{n}{g} \PY{o}{!=} \PY{n}{group}\PY{p}{]}
+            \PY{n}{candidate} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{design\PYZus{}matrix}\PY{p}{(}\PY{n}{remaining}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+            \PY{k}{if} \PY{n}{best\PYZus{}model} \PY{o+ow}{is} \PY{k+kc}{None} \PY{o+ow}{or} \PY{n}{candidate}\PY{o}{.}\PY{n}{bic} \PY{o}{\PYZlt{}} \PY{n}{best\PYZus{}model}\PY{o}{.}\PY{n}{bic}\PY{p}{:}
+                \PY{n}{best\PYZus{}group}\PY{p}{,} \PY{n}{best\PYZus{}model} \PY{o}{=} \PY{n}{group}\PY{p}{,} \PY{n}{candidate}
+        \PY{c+c1}{\PYZsh{} Зупиняємося, коли жодне вилучення не зменшує BIC.}
+        \PY{k}{if} \PY{n}{best\PYZus{}model}\PY{o}{.}\PY{n}{bic} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{bic}\PY{p}{:}
+            \PY{k}{break}
+        \PY{n}{active}\PY{o}{.}\PY{n}{remove}\PY{p}{(}\PY{n}{best\PYZus{}group}\PY{p}{)}
+        \PY{n}{model} \PY{o}{=} \PY{n}{best\PYZus{}model}
+        \PY{n}{history}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Крок}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{n}{history}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Вилучено}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{best\PYZus{}group}\PY{p}{,}
+                        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{k}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{int}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{df\PYZus{}model} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{BIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model}\PY{o}{.}\PY{n}{bic}\PY{p}{\PYZcb{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{model}\PY{p}{,} \PY{n}{active}\PY{p}{,} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{history}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Починаємо з усіх початкових змінних; категорію вилучаємо цілим блоком індикаторів.}
+\PY{n}{selected\PYZus{}model}\PY{p}{,} \PY{n}{selected\PYZus{}terms}\PY{p}{,} \PY{n}{history} \PY{o}{=} \PY{n}{backward\PYZus{}bic}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{groups}\PY{p}{)}
+\PY{n}{X\PYZus{}selected} \PY{o}{=} \PY{n}{design\PYZus{}matrix}\PY{p}{(}\PY{n}{selected\PYZus{}terms}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: assert рангу і локального оптимуму BIC; друк історії та списку змінних.}
+\end{Verbatim}

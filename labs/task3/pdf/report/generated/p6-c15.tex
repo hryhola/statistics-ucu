@@ -1,0 +1,21 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import}\PY{+w}{ }\PY{n+nn}{warnings}
+\PY{c+c1}{\PYZsh{} 1) Збіжність: та сама крива, але без зсуву року.}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{exponential\PYZus{}raw}\PY{p}{(}\PY{n}{year}\PY{p}{,} \PY{n}{a}\PY{p}{,} \PY{n}{b}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{a} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{b} \PY{o}{*} \PY{n}{year}\PY{p}{)}
+\PY{k}{with} \PY{n}{warnings}\PY{o}{.}\PY{n}{catch\PYZus{}warnings}\PY{p}{(}\PY{n}{record}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)} \PY{k}{as} \PY{n}{caught}\PY{p}{:}
+    \PY{n}{warnings}\PY{o}{.}\PY{n}{simplefilter}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{always}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{raw\PYZus{}default}\PY{p}{,} \PY{n}{raw\PYZus{}default\PYZus{}cov} \PY{o}{=} \PY{n}{curve\PYZus{}fit}\PY{p}{(}\PY{n}{exponential\PYZus{}raw}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{)}  \PY{c+c1}{\PYZsh{} p0 = [1, 1] за замовчуванням}
+    \PY{k}{with} \PY{n}{np}\PY{o}{.}\PY{n}{errstate}\PY{p}{(}\PY{n}{over}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{:}
+        \PY{n}{raw\PYZus{}default\PYZus{}mse} \PY{o}{=} \PY{n}{mse}\PY{p}{(}\PY{n}{exponential\PYZus{}raw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{o}{*}\PY{n}{raw\PYZus{}default}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Та сама крива без зсуву року, але з p0, перерахованим із центрованої моделі.}
+\PY{n}{raw\PYZus{}params}\PY{p}{,} \PY{n}{raw\PYZus{}cov} \PY{o}{=} \PY{n}{curve\PYZus{}fit}\PY{p}{(}\PY{n}{exponential\PYZus{}raw}\PY{p}{,} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{p0}\PY{o}{=}\PY{p}{[}\PY{n}{p0}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{n}{p0}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]} \PY{o}{*} \PY{n}{YEAR\PYZus{}0}\PY{p}{)}\PY{p}{,} \PY{n}{p0}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+\PY{n}{raw\PYZus{}se} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{diag}\PY{p}{(}\PY{n}{raw\PYZus{}cov}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} 2) Усі пояснювальні змінні перших 500 рядків: кількість параметрів проти n.}
+\PY{n}{features} \PY{o}{=} \PY{n}{df\PYZus{}500}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Order}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{PID}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+\PY{n}{categorical} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSSubClass}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+} \PY{n+nb}{list}\PY{p}{(}\PY{n}{features}\PY{o}{.}\PY{n}{select\PYZus{}dtypes}\PY{p}{(}\PY{n}{exclude}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{number}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{n}{X\PYZus{}all} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{features}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{categorical}\PY{p}{,} \PY{n}{drop\PYZus{}first}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+\PY{n}{complete} \PY{o}{=} \PY{n}{X\PYZus{}all}\PY{o}{.}\PY{n}{notna}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{all}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{X\PYZus{}complete} \PY{o}{=} \PY{n}{X\PYZus{}all}\PY{p}{[}\PY{n}{complete}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Далі: друк попереджень, таблиці порівняння параметризацій і розмірів матриці.}
+\end{Verbatim}

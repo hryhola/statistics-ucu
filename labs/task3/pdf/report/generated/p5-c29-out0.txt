@@ -1,0 +1,1 @@
+Колонок для імпутації: 34; пропуски: {'LotFrontage': 490, 'LotArea': 5, 'MasVnrArea': 23, 'BsmtFinSF1': 1, 'BsmtFinSF2': 1, 'BsmtUnfSF': 1, 'TotalBsmtSF': 1, 'BsmtFullBath': 2, 'BsmtHalfBath': 2, 'GarageCars': 1, 'GarageArea': 1}

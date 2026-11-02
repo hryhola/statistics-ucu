@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: print типу MSSubClass (вивід нижче).}
+\PY{n}{numeric\PYZus{}class} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice \PYZti{} MSSubClass}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}          \PY{c+c1}{\PYZsh{} як int64}
+\PY{n}{formula\PYZus{}class} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice \PYZti{} C(MSSubClass)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}       \PY{c+c1}{\PYZsh{} C(...) у формулі}
+\PY{n}{df\PYZus{}category} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{assign}\PY{p}{(}\PY{n}{MSSubClass}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{Categorical}\PY{p}{(}\PY{n}{df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSSubClass}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}
+\PY{n}{category\PYZus{}class} \PY{o}{=} \PY{n}{smf}\PY{o}{.}\PY{n}{ols}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice \PYZti{} MSSubClass}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df\PYZus{}category}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}  \PY{c+c1}{\PYZsh{} pd.Categorical}
+\PY{c+c1}{\PYZsh{} Далі: assert рівності прогнозів, збирання таблиць (виводи нижче), графік.}
+\end{Verbatim}

@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} curve\PYZus{}fit оцінює коваріацію через лінеаризацію: pcov = s\PYZca{}2 (J\PYZca{}T J)\PYZca{}(\PYZhy{}1),}
+\PY{c+c1}{\PYZsh{} де J \PYZhy{} похідні моделі за a і b в точці оцінки, s\PYZca{}2 = RSS / (n \PYZhy{} 2).}
+\PY{n}{t} \PY{o}{=} \PY{n}{x} \PY{o}{\PYZhy{}} \PY{n}{YEAR\PYZus{}0}
+\PY{n}{J} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{column\PYZus{}stack}\PY{p}{(}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{b\PYZus{}hat} \PY{o}{*} \PY{n}{t}\PY{p}{)}\PY{p}{,} \PY{n}{a\PYZus{}hat} \PY{o}{*} \PY{n}{t} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{b\PYZus{}hat} \PY{o}{*} \PY{n}{t}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+\PY{n}{s2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{exp\PYZus{}pred}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{p}{(}\PY{n}{n} \PY{o}{\PYZhy{}} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{se} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sqrt}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{diag}\PY{p}{(}\PY{n}{pcov}\PY{p}{)}\PY{p}{)}
+\PY{n}{z} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{norm}\PY{o}{.}\PY{n}{ppf}\PY{p}{(}\PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{ALPHA} \PY{o}{/} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Нормальність залишків NLS перевіряємо тим самим тестом Jarque\PYZhy{}Bera.}
+\PY{n}{residuals} \PY{o}{=} \PY{n}{y} \PY{o}{\PYZhy{}} \PY{n}{exp\PYZus{}pred}
+\PY{n}{jb} \PY{o}{=} \PY{n}{stats}\PY{o}{.}\PY{n}{jarque\PYZus{}bera}\PY{p}{(}\PY{n}{residuals}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: assert pcov = s²(JᵀJ)⁻¹, таблиця оцінок, розкид залишків за періодами, графік.}
+\end{Verbatim}

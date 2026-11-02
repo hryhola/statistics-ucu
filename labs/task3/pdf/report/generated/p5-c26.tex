@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{influence} \PY{o}{=} \PY{n}{OLSInfluence}\PY{p}{(}\PY{n}{selected\PYZus{}model}\PY{p}{)}
+\PY{k}{with} \PY{n}{np}\PY{o}{.}\PY{n}{errstate}\PY{p}{(}\PY{n}{invalid}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{divide}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{:}  \PY{c+c1}{\PYZsh{} для h = 1 формули містять 0/0}
+    \PY{n}{leverage} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{influence}\PY{o}{.}\PY{n}{hat\PYZus{}matrix\PYZus{}diag}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{y}\PY{o}{.}\PY{n}{index}\PY{p}{)}
+    \PY{n}{student} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{influence}\PY{o}{.}\PY{n}{resid\PYZus{}studentized\PYZus{}internal}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{y}\PY{o}{.}\PY{n}{index}\PY{p}{)}
+    \PY{n}{cooks} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{influence}\PY{o}{.}\PY{n}{cooks\PYZus{}distance}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{y}\PY{o}{.}\PY{n}{index}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} h = 1: модель точно підганяє продаж, його залишок дорівнює нулю.}
+\PY{n}{exact\PYZus{}fit} \PY{o}{=} \PY{n}{leverage} \PY{o}{\PYZgt{}} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{l+m+mf}{1e\PYZhy{}8}
+\PY{n}{cooks}\PY{p}{[}\PY{n}{exact\PYZus{}fit}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan}    \PY{c+c1}{\PYZsh{} h = 1: залишок 0, D = 0/0 не визначено}
+\PY{n}{student}\PY{p}{[}\PY{n}{exact\PYZus{}fit}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{nan}
+\PY{c+c1}{\PYZsh{} Чутливість: оцінки без спостереження з найбільшим Cook\PYZsq{}s D.}
+\PY{n}{top\PYZus{}cook} \PY{o}{=} \PY{n}{cooks}\PY{o}{.}\PY{n}{idxmax}\PY{p}{(}\PY{p}{)}
+\PY{n}{without\PYZus{}top} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{OLS}\PY{p}{(}\PY{n}{y}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{top\PYZus{}cook}\PY{p}{)}\PY{p}{,} \PY{n}{X\PYZus{}selected}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{top\PYZus{}cook}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: assert суми важелів, пошук рідкісних рівнів для h = 1, таблиці, графіки.}
+\end{Verbatim}

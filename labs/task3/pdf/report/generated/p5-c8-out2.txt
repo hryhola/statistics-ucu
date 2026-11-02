@@ -1,0 +1,2 @@
+Частка нулів: {'BsmtFinSF1': 0.317, 'BsmtUnfSF': 0.083}
+Кореляція з SalePrice: {'LotFrontage': 0.357, 'LotArea': 0.267, 'YearBuilt': 0.558, 'BsmtFinSF1': 0.433, 'BsmtUnfSF': 0.183, 'SalePrice': 1.0}

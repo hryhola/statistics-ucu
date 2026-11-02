@@ -1,0 +1,2 @@
+int64-модель: {'Intercept': 189945.2, 'MSSubClass': -159.43}
+Перші коефіцієнти C(MSSubClass): {'Intercept': 187356.0, 'C(MSSubClass)[T.30]': -90629.0, 'C(MSSubClass)[T.40]': -42439.0, 'C(MSSubClass)[T.45]': -75572.0}
