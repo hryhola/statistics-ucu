@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{fpr}\PY{p}{,} \PY{n}{tpr}\PY{p}{,} \PY{n}{thresholds} \PY{o}{=} \PY{n}{roc\PYZus{}curve}\PY{p}{(}\PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{valid\PYZus{}probabilities}\PY{p}{,} \PY{n}{drop\PYZus{}intermediate}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{auc\PYZus{}value} \PY{o}{=} \PY{n}{roc\PYZus{}auc\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{valid\PYZus{}probabilities}\PY{p}{)}
+\PY{n}{youden} \PY{o}{=} \PY{n}{tpr} \PY{o}{\PYZhy{}} \PY{n}{fpr}
+\PY{n}{finite} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{flatnonzero}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{isfinite}\PY{p}{(}\PY{n}{thresholds}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} При однаковому максимумі беремо найбільший поріг: roc\PYZus{}curve повертає їх за спаданням.}
+\PY{n}{best} \PY{o}{=} \PY{n}{finite}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{argmax}\PY{p}{(}\PY{n}{youden}\PY{p}{[}\PY{n}{finite}\PY{p}{]}\PY{p}{)}\PY{p}{]}
+\PY{n}{optimal\PYZus{}threshold} \PY{o}{=} \PY{n}{thresholds}\PY{p}{[}\PY{n}{best}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

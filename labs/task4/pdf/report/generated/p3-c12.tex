@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{significant\PYZus{}positive} \PY{o}{=} \PY{n}{coefficient\PYZus{}table}\PY{p}{[}\PY{p}{(}\PY{n}{beta\PYZus{}raw} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{n}{selected}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{n}{SIGNIFICANCE}\PY{p}{)}\PY{p}{]}
+\PY{n}{significant\PYZus{}negative} \PY{o}{=} \PY{n}{coefficient\PYZus{}table}\PY{p}{[}\PY{p}{(}\PY{n}{beta\PYZus{}raw} \PY{o}{\PYZlt{}} \PY{l+m+mi}{0}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{pvalues}\PY{p}{[}\PY{n}{selected}\PY{p}{]} \PY{o}{\PYZlt{}} \PY{n}{SIGNIFICANCE}\PY{p}{)}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Перевіряємо, скільки навчальних прикладів підтримують висновок щодо басейну.}
+\PY{n}{display}\PY{p}{(}\PY{n}{pd}\PY{o}{.}\PY{n}{crosstab}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{PoolArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}\PY{o}{.}\PY{n}{rename\PYZus{}axis}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Площа басейну \PYZgt{} 0}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

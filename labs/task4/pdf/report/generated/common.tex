@@ -1,0 +1,53 @@
+\section*{Спільні припущення та підготовка}
+
+\markright{Підготовка}
+
+Опціональні пункти 2.б, 2.з, 2.и пропущено.
+
+Дані Ames Housing: 2930 продажів, SalePrice у доларах США, площі у
+квадратних футах. Випадкове розбиття 80/20 із seed 42 дає 2344
+навчальних і 586 відкладених рядків, однакових для всіх частин; у
+частині 2 відкладені рядки називаємо валідаційними, бо на них порівнюємо
+кілька моделей. Рівень значущості 0.05.
+
+У частинах 1 і 2 вилучаємо Order, PID і GarageYrBlt; MSSubClass і
+текстові ознаки кодуємо індикаторами з одним базовим рівнем, структурне
+NA є окремою категорією, числові пропуски заповнюємо навчальною
+медіаною, числові ознаки стандартизуємо. Усі перетворення навчаються
+лише на навчальній частині, штрафи вибираємо 5-блочною крос-валідацією.
+У частині 3 клас 1 означає SalePrice понад 130000 доларів;
+використовуємо лише числові ознаки, їх підготовку показано на початку
+частини.
+
+
+\pythoncode{common-data}
+
+\Needspace{120pt}\par\noindent\begin{minipage}[t]{0.49\linewidth}
+\begingroup\fontsize{7.5}{9.5}\selectfont\setlength{\tabcolsep}{2.5mm}\renewcommand{\arraystretch}{1.12}\par\noindent\begin{tabular}{|ll|}
+\hline
+ & Значення \\
+\hline
+Спостережень & 2930 \\
+Навчальна частина & 2344 \\
+Перевірочна частина & 586 \\
+Числових ознак & 34 \\
+Категоріальних ознак & 44 \\
+Пропусків у Sale\allowbreak{}Price & 0 \\
+\hline
+\end{tabular}
+\par\endgroup
+\end{minipage}\hfill\begin{minipage}[t]{0.49\linewidth}
+\begingroup\fontsize{7.5}{9.5}\selectfont\setlength{\tabcolsep}{2.5mm}\renewcommand{\arraystretch}{1.12}\par\noindent\begin{tabular}{|ll|}
+\hline
+Fireplace\allowbreak{}Qu & Кількість \\
+\hline
+NA & 1422 \\
+Gd & 744 \\
+TA & 600 \\
+Fa & 75 \\
+Po & 46 \\
+Ex & 43 \\
+\hline
+\end{tabular}
+\par\endgroup
+\end{minipage}\par

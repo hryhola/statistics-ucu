@@ -1,0 +1,4 @@
+Рівні FireplaceQu: ['Ex' 'Fa' 'Gd' 'NA' 'Po' 'TA']
+Базовий рівень: Ex
+Даммі FireplaceQu: ['FireplaceQu_Fa', 'FireplaceQu_Gd', 'FireplaceQu_NA', 'FireplaceQu_Po', 'FireplaceQu_TA']
+Розмір матриці після кодування: (2344, 294)

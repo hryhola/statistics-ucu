@@ -1,0 +1,26 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{c+c1}{\PYZsh{} Відтворюємо фінальні Lasso та OLS частини (1), не читаючи її стан ядра.}
+\PY{n}{lasso\PYZus{}search} \PY{o}{=} \PY{n}{GridSearchCV}\PY{p}{(}
+    \PY{n}{Pipeline}\PY{p}{(}\PY{p}{[}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prepare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{clone}\PY{p}{(}\PY{n}{preprocessor}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{Lasso}\PY{p}{(}\PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{50000}\PY{p}{,} \PY{n}{tol}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}6}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model\PYZus{}\PYZus{}alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{35}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{,}
+    \PY{n}{cv}\PY{o}{=}\PY{n}{KFold}\PY{p}{(}\PY{n}{n\PYZus{}splits}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{shuffle}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}\PY{p}{,}
+    \PY{n}{scoring}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{neg\PYZus{}mean\PYZus{}squared\PYZus{}error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,}
+\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{lasso\PYZus{}model} \PY{o}{=} \PY{n}{lasso\PYZus{}search}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{o}{.}\PY{n}{named\PYZus{}steps}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{ols\PYZus{}model} \PY{o}{=} \PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{importance} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Lasso, коеф.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{lasso\PYZus{}model}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OLS, коеф.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ols\PYZus{}model}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{,}
+                           \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CART MDI}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tree}\PY{o}{.}\PY{n}{feature\PYZus{}importances\PYZus{}}\PY{p}{\PYZcb{}}\PY{p}{,}
+                          \PY{n}{index}\PY{o}{=}\PY{n}{pd}\PY{o}{.}\PY{n}{Index}\PY{p}{(}\PY{n}{feature\PYZus{}names}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ознака}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}
+\PY{n}{tree\PYZus{}top10} \PY{o}{=} \PY{n}{importance}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CART MDI}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{kind}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{stable}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Перевіряємо MDI через зважені зменшення неоднорідності всіх поділів.}
+\PY{n}{manual\PYZus{}mdi} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{k}{for} \PY{n}{node}\PY{p}{,} \PY{n}{feature} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{t}\PY{o}{.}\PY{n}{feature}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{n}{feature} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{:}
+        \PY{n}{l}\PY{p}{,} \PY{n}{r} \PY{o}{=} \PY{n}{t}\PY{o}{.}\PY{n}{children\PYZus{}left}\PY{p}{[}\PY{n}{node}\PY{p}{]}\PY{p}{,} \PY{n}{t}\PY{o}{.}\PY{n}{children\PYZus{}right}\PY{p}{[}\PY{n}{node}\PY{p}{]}
+        \PY{n}{manual\PYZus{}mdi}\PY{p}{[}\PY{n}{feature}\PY{p}{]} \PY{o}{+}\PY{o}{=} \PY{p}{(}\PY{n}{t}\PY{o}{.}\PY{n}{weighted\PYZus{}n\PYZus{}node\PYZus{}samples}\PY{p}{[}\PY{n}{node}\PY{p}{]} \PY{o}{*} \PY{n}{t}\PY{o}{.}\PY{n}{impurity}\PY{p}{[}\PY{n}{node}\PY{p}{]}
+                               \PY{o}{\PYZhy{}} \PY{n}{t}\PY{o}{.}\PY{n}{weighted\PYZus{}n\PYZus{}node\PYZus{}samples}\PY{p}{[}\PY{n}{l}\PY{p}{]} \PY{o}{*} \PY{n}{t}\PY{o}{.}\PY{n}{impurity}\PY{p}{[}\PY{n}{l}\PY{p}{]}
+                               \PY{o}{\PYZhy{}} \PY{n}{t}\PY{o}{.}\PY{n}{weighted\PYZus{}n\PYZus{}node\PYZus{}samples}\PY{p}{[}\PY{n}{r}\PY{p}{]} \PY{o}{*} \PY{n}{t}\PY{o}{.}\PY{n}{impurity}\PY{p}{[}\PY{n}{r}\PY{p}{]}\PY{p}{)}
+\PY{n}{manual\PYZus{}mdi} \PY{o}{/}\PY{o}{=} \PY{n}{manual\PYZus{}mdi}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

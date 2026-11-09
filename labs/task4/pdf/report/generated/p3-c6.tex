@@ -1,0 +1,34 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{fit\PYZus{}logit}\PY{p}{(}\PY{n}{columns}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Усі порівняння використовують ті самі рядки й звичайний ММП без штрафу.}
+    \PY{n}{result} \PY{o}{=} \PY{n}{sm}\PY{o}{.}\PY{n}{Logit}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{Z\PYZus{}train}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+} \PY{n}{columns}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}
+        \PY{n}{method}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{newton}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{maxiter}\PY{o}{=}\PY{l+m+mi}{200}\PY{p}{,} \PY{n}{tol}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}9}\PY{p}{,} \PY{n}{disp}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n}{result}\PY{o}{.}\PY{n}{mle\PYZus{}retvals}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{converged}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o+ow}{or} \PY{o+ow}{not} \PY{n}{np}\PY{o}{.}\PY{n}{isfinite}\PY{p}{(}\PY{n}{result}\PY{o}{.}\PY{n}{aic}\PY{p}{)}\PY{p}{:}
+        \PY{k}{raise} \PY{n+ne}{RuntimeError}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Кандидатна модель не збіглася; AIC не порівнюємо.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{result}
+\PY{n}{selected} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{X}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+\PY{n}{model} \PY{o}{=} \PY{n}{fit\PYZus{}logit}\PY{p}{(}\PY{n}{selected}\PY{p}{)}
+\PY{n}{selection\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Крок}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Вилучено}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Початкова модель}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ознак}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{n}{selected}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{AIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model}\PY{o}{.}\PY{n}{aic}\PY{p}{\PYZcb{}}\PY{p}{]}
+\PY{n}{fits\PYZus{}checked} \PY{o}{=} \PY{l+m+mi}{1}
+\PY{k}{while} \PY{n}{selected}\PY{p}{:}
+    \PY{n}{candidates} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{selected}\PY{p}{:}
+        \PY{n}{remaining} \PY{o}{=} \PY{p}{[}\PY{n}{name} \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{selected} \PY{k}{if} \PY{n}{name} \PY{o}{!=} \PY{n}{column}\PY{p}{]}
+        \PY{n}{candidate} \PY{o}{=} \PY{n}{fit\PYZus{}logit}\PY{p}{(}\PY{n}{remaining}\PY{p}{)}
+        \PY{n}{fits\PYZus{}checked} \PY{o}{+}\PY{o}{=} \PY{l+m+mi}{1}
+        \PY{n}{candidates}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{(}\PY{n}{candidate}\PY{o}{.}\PY{n}{aic}\PY{p}{,} \PY{n}{column}\PY{p}{,} \PY{n}{candidate}\PY{p}{)}\PY{p}{)}
+    \PY{n}{best\PYZus{}aic}\PY{p}{,} \PY{n}{removed}\PY{p}{,} \PY{n}{candidate} \PY{o}{=} \PY{n+nb}{min}\PY{p}{(}\PY{n}{candidates}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{k}{lambda} \PY{n}{item}\PY{p}{:} \PY{n}{item}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+    \PY{c+c1}{\PYZsh{} Поріг відокремлює покращення від похибки округлення.}
+    \PY{k}{if} \PY{n}{best\PYZus{}aic} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{aic} \PY{o}{\PYZhy{}} \PY{l+m+mf}{1e\PYZhy{}8}\PY{p}{:}
+        \PY{k}{break}
+    \PY{n}{selected}\PY{o}{.}\PY{n}{remove}\PY{p}{(}\PY{n}{removed}\PY{p}{)}
+    \PY{n}{model} \PY{o}{=} \PY{n}{candidate}
+    \PY{n}{selection\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Крок}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{n}{selection\PYZus{}rows}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Вилучено}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{removed}\PY{p}{,}
+                           \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ознак}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{n}{selected}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{AIC}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model}\PY{o}{.}\PY{n}{aic}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Повертаємо нахили та константу до початкових одиниць.}
+\PY{n}{beta\PYZus{}raw} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{n}{selected}\PY{p}{]} \PY{o}{/} \PY{n}{scales}\PY{p}{[}\PY{n}{selected}\PY{p}{]}
+\PY{n}{intercept\PYZus{}raw} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{params}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{n}{beta\PYZus{}raw} \PY{o}{*} \PY{n}{means}\PY{p}{[}\PY{n}{selected}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\PY{n}{se\PYZus{}raw} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{bse}\PY{p}{[}\PY{n}{selected}\PY{p}{]} \PY{o}{/} \PY{n}{scales}\PY{p}{[}\PY{n}{selected}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

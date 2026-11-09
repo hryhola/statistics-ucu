@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{tree} \PY{o}{=} \PY{n}{DecisionTreeRegressor}\PY{p}{(}\PY{n}{max\PYZus{}leaf\PYZus{}nodes}\PY{o}{=}\PY{l+m+mi}{11}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}
+\PY{n}{tree}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{structure} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Листків}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tree}\PY{o}{.}\PY{n}{get\PYZus{}n\PYZus{}leaves}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Поділів}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tree}\PY{o}{.}\PY{n}{tree\PYZus{}}\PY{o}{.}\PY{n}{node\PYZus{}count} \PY{o}{\PYZhy{}} \PY{n}{tree}\PY{o}{.}\PY{n}{get\PYZus{}n\PYZus{}leaves}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Глибина}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tree}\PY{o}{.}\PY{n}{get\PYZus{}depth}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Навчальна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{tree}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Валідаційна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{tree}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}valid}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{shown\PYZus{}tree} \PY{o}{=} \PY{n}{deepcopy}\PY{p}{(}\PY{n}{tree}\PY{p}{)}
+\PY{n}{scaler} \PY{o}{=} \PY{n}{prepared}\PY{o}{.}\PY{n}{named\PYZus{}transformers\PYZus{}}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{num}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{named\PYZus{}steps}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{scale}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{k}{for} \PY{n}{node}\PY{p}{,} \PY{n}{feature} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{shown\PYZus{}tree}\PY{o}{.}\PY{n}{tree\PYZus{}}\PY{o}{.}\PY{n}{feature}\PY{p}{)}\PY{p}{:}
+    \PY{k}{if} \PY{l+m+mi}{0} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{feature} \PY{o}{\PYZlt{}} \PY{n+nb}{len}\PY{p}{(}\PY{n}{numeric\PYZus{}columns}\PY{p}{)}\PY{p}{:}
+        \PY{n}{shown\PYZus{}tree}\PY{o}{.}\PY{n}{tree\PYZus{}}\PY{o}{.}\PY{n}{threshold}\PY{p}{[}\PY{n}{node}\PY{p}{]} \PY{o}{=} \PY{n}{tree}\PY{o}{.}\PY{n}{tree\PYZus{}}\PY{o}{.}\PY{n}{threshold}\PY{p}{[}\PY{n}{node}\PY{p}{]} \PY{o}{*} \PY{n}{scaler}\PY{o}{.}\PY{n}{scale\PYZus{}}\PY{p}{[}\PY{n}{feature}\PY{p}{]} \PY{o}{+} \PY{n}{scaler}\PY{o}{.}\PY{n}{mean\PYZus{}}\PY{p}{[}\PY{n}{feature}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

@@ -1,0 +1,24 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{c+c1}{\PYZsh{} Кожне перетворення навчається лише на переданій навчальній частині.}
+\PY{n}{numeric\PYZus{}pipe} \PY{o}{=} \PY{n}{Pipeline}\PY{p}{(}\PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{impute}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{SimpleImputer}\PY{p}{(}\PY{n}{strategy}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{scale}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{StandardScaler}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+\PY{p}{]}\PY{p}{)}
+\PY{n}{categorical\PYZus{}pipe} \PY{o}{=} \PY{n}{Pipeline}\PY{p}{(}\PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{impute}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{SimpleImputer}\PY{p}{(}\PY{n}{strategy}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{constant}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{fill\PYZus{}value}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Missing}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{encode}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{OneHotEncoder}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{first}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{handle\PYZus{}unknown}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ignore}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{sparse\PYZus{}output}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+\PY{p}{]}\PY{p}{)}
+\PY{n}{preprocessor} \PY{o}{=} \PY{n}{ColumnTransformer}\PY{p}{(}\PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{num}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{numeric\PYZus{}pipe}\PY{p}{,} \PY{n}{numeric\PYZus{}columns}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cat}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{categorical\PYZus{}pipe}\PY{p}{,} \PY{n}{categorical\PYZus{}columns}\PY{p}{)}\PY{p}{,}
+\PY{p}{]}\PY{p}{,} \PY{n}{verbose\PYZus{}feature\PYZus{}names\PYZus{}out}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+\PY{n}{prepared} \PY{o}{=} \PY{n}{clone}\PY{p}{(}\PY{n}{preprocessor}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\PY{n}{Z\PYZus{}train} \PY{o}{=} \PY{n}{prepared}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+\PY{n}{Z\PYZus{}test} \PY{o}{=} \PY{n}{prepared}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+\PY{n}{feature\PYZus{}names} \PY{o}{=} \PY{n}{prepared}\PY{o}{.}\PY{n}{get\PYZus{}feature\PYZus{}names\PYZus{}out}\PY{p}{(}\PY{p}{)}
+\PY{n}{scaler} \PY{o}{=} \PY{n}{prepared}\PY{o}{.}\PY{n}{named\PYZus{}transformers\PYZus{}}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{num}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{named\PYZus{}steps}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{scale}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{encoder} \PY{o}{=} \PY{n}{prepared}\PY{o}{.}\PY{n}{named\PYZus{}transformers\PYZus{}}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{cat}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{named\PYZus{}steps}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{encode}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{fireplace\PYZus{}index} \PY{o}{=} \PY{n}{categorical\PYZus{}columns}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{FireplaceQu}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

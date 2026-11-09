@@ -1,0 +1,39 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{c+c1}{\PYZsh{} Прогноз перед обчисленням: Ridge зменшить умовні дисперсії коефіцієнтів,}
+\PY{c+c1}{\PYZsh{} але його помилка на нових даних не обов\PYZsq{}язково буде меншою за МНК.}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Прогноз: менші умовні дисперсії Ridge; перевага за перевірочною MSE не гарантована.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ridge\PYZus{}alphas} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{o}{\PYZhy{}}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{40}\PY{p}{)}
+\PY{n}{ridge\PYZus{}search} \PY{o}{=} \PY{n}{GridSearchCV}\PY{p}{(}
+    \PY{n}{Pipeline}\PY{p}{(}\PY{p}{[}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prepare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{clone}\PY{p}{(}\PY{n}{preprocessor}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{Ridge}\PY{p}{(}\PY{n}{solver}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{svd}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model\PYZus{}\PYZus{}alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ridge\PYZus{}alphas}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{cv}\PY{o}{=}\PY{n}{cv}\PY{p}{,}
+    \PY{n}{scoring}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{neg\PYZus{}mean\PYZus{}squared\PYZus{}error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,}
+\PY{p}{)}
+\PY{n}{ridge\PYZus{}search}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{ridge\PYZus{}model} \PY{o}{=} \PY{n}{ridge\PYZus{}search}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{o}{.}\PY{n}{named\PYZus{}steps}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{ridge\PYZus{}alpha} \PY{o}{=} \PY{n}{ridge\PYZus{}search}\PY{o}{.}\PY{n}{best\PYZus{}params\PYZus{}}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model\PYZus{}\PYZus{}alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{ols\PYZus{}model} \PY{o}{=} \PY{n}{LinearRegression}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Усі три моделі використовують ту саму матрицю й ті самі рядки.}
+\PY{n}{metrics} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{name}\PY{p}{,} \PY{n}{model} \PY{o+ow}{in} \PY{p}{[}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OLS}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ols\PYZus{}model}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Lasso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{lasso\PYZus{}model}\PY{p}{)}\PY{p}{,} \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ridge}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ridge\PYZus{}model}\PY{p}{)}\PY{p}{]}\PY{p}{:}
+    \PY{n}{metrics}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Модель}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{name}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{OLS}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Lasso}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{lasso\PYZus{}alpha}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ridge}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{ridge\PYZus{}alpha}\PY{p}{\PYZcb{}}\PY{p}{[}\PY{n}{name}\PY{p}{]}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Навчальна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Перевірочна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}test}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Норма коефіцієнтів}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{model}\PY{o}{.}\PY{n}{coef\PYZus{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} За точної колінеарності МНК повертає розв\PYZsq{}язок найменшої норми.}
+\PY{c+c1}{\PYZsh{} Псевдообернена матриця дозволяє порівняти саме цей розв\PYZsq{}язок із Ridge.}
+\PY{n}{Z\PYZus{}centered} \PY{o}{=} \PY{n}{Z\PYZus{}train} \PY{o}{\PYZhy{}} \PY{n}{Z\PYZus{}train}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+\PY{n}{rank} \PY{o}{=} \PY{n}{ols\PYZus{}model}\PY{o}{.}\PY{n}{rank\PYZus{}}
+\PY{n}{sigma2} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}train} \PY{o}{\PYZhy{}} \PY{n}{ols\PYZus{}model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{)}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{o}{/} \PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{rank} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{Z\PYZus{}pinv} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{pinv}\PY{p}{(}\PY{n}{Z\PYZus{}centered}\PY{p}{,} \PY{n}{rcond}\PY{o}{=}\PY{n+nb}{max}\PY{p}{(}\PY{n}{Z\PYZus{}centered}\PY{o}{.}\PY{n}{shape}\PY{p}{)} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{finfo}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{o}{.}\PY{n}{eps}\PY{p}{)}
+\PY{n}{A\PYZus{}ridge} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{solve}\PY{p}{(}
+    \PY{n}{Z\PYZus{}centered}\PY{o}{.}\PY{n}{T} \PY{o}{@} \PY{n}{Z\PYZus{}centered} \PY{o}{+} \PY{n}{ridge\PYZus{}alpha} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{eye}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+    \PY{n}{Z\PYZus{}centered}\PY{o}{.}\PY{n}{T}\PY{p}{,}
+\PY{p}{)}
+\PY{n}{var\PYZus{}ols} \PY{o}{=} \PY{n}{sigma2} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{Z\PYZus{}pinv} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{var\PYZus{}ridge} \PY{o}{=} \PY{n}{sigma2} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{A\PYZus{}ridge} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

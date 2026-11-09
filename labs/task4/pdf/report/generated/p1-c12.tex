@@ -1,0 +1,23 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{lasso\PYZus{}alphas} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{,} \PY{l+m+mi}{35}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} LassoCV виконує п\PYZsq{}ять блоків на вже підготовленій матриці.}
+\PY{n}{lasso\PYZus{}cv} \PY{o}{=} \PY{n}{LassoCV}\PY{p}{(}\PY{n}{alphas}\PY{o}{=}\PY{n}{lasso\PYZus{}alphas}\PY{p}{,} \PY{n}{cv}\PY{o}{=}\PY{n}{cv}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{50000}\PY{p}{,} \PY{n}{tol}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}6}\PY{p}{)}
+\PY{n}{lasso\PYZus{}cv}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Перевіряємо вибір штрафу без спільного масштабування між блоками.}
+\PY{n}{lasso\PYZus{}search} \PY{o}{=} \PY{n}{GridSearchCV}\PY{p}{(}
+    \PY{n}{Pipeline}\PY{p}{(}\PY{p}{[}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{prepare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{clone}\PY{p}{(}\PY{n}{preprocessor}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+              \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{Lasso}\PY{p}{(}\PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{50000}\PY{p}{,} \PY{n}{tol}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}6}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model\PYZus{}\PYZus{}alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{lasso\PYZus{}alphas}\PY{p}{\PYZcb{}}\PY{p}{,} \PY{n}{cv}\PY{o}{=}\PY{n}{cv}\PY{p}{,}
+    \PY{n}{scoring}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{neg\PYZus{}mean\PYZus{}squared\PYZus{}error}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,}
+\PY{p}{)}
+\PY{n}{lasso\PYZus{}search}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{lasso\PYZus{}model} \PY{o}{=} \PY{n}{lasso\PYZus{}search}\PY{o}{.}\PY{n}{best\PYZus{}estimator\PYZus{}}\PY{o}{.}\PY{n}{named\PYZus{}steps}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{lasso\PYZus{}alpha} \PY{o}{=} \PY{n}{lasso\PYZus{}search}\PY{o}{.}\PY{n}{best\PYZus{}params\PYZus{}}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{model\PYZus{}\PYZus{}alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Центрування потрібне, бо lasso\PYZus{}path не оцінює вільний член.}
+\PY{n}{path\PYZus{}alphas}\PY{p}{,} \PY{n}{coefficients}\PY{p}{,} \PY{n}{gaps} \PY{o}{=} \PY{n}{lasso\PYZus{}path}\PY{p}{(}
+    \PY{n}{Z\PYZus{}train} \PY{o}{\PYZhy{}} \PY{n}{Z\PYZus{}train}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+    \PY{n}{alphas}\PY{o}{=}\PY{n}{np}\PY{o}{.}\PY{n}{logspace}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{60}\PY{p}{)}\PY{p}{,} \PY{n}{max\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{50000}\PY{p}{,} \PY{n}{tol}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}6}\PY{p}{,}
+\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

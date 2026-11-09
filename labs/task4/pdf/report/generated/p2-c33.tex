@@ -1,0 +1,32 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{c+c1}{\PYZsh{} Прогноз до досліду: усереднення зменшить коливання прогнозів; криві можуть мати нерівності.}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Прогноз: зі збільшенням ансамблю валідаційна MSE стабілізуватиметься; монотонність не гарантована.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ensemble\PYZus{}sizes} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{25}\PY{p}{,} \PY{l+m+mi}{50}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{,} \PY{n}{FINAL\PYZus{}TREES}\PY{p}{]}
+\PY{n}{ensembles} \PY{o}{=} \PY{p}{\PYZob{}}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Bagging}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{BaggingRegressor}\PY{p}{(}
+        \PY{n}{estimator}\PY{o}{=}\PY{n}{DecisionTreeRegressor}\PY{p}{(}\PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}\PY{p}{,}
+        \PY{n}{bootstrap}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{max\PYZus{}samples}\PY{o}{=}\PY{l+m+mf}{1.0}\PY{p}{,} \PY{n}{max\PYZus{}features}\PY{o}{=}\PY{l+m+mf}{1.0}\PY{p}{,}
+        \PY{n}{warm\PYZus{}start}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{,} \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Random Forest}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{RandomForestRegressor}\PY{p}{(}
+        \PY{n}{bootstrap}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{max\PYZus{}features}\PY{o}{=}\PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mi}{3}\PY{p}{,} \PY{n}{warm\PYZus{}start}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,}
+        \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{,} \PY{n}{n\PYZus{}jobs}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+\PY{p}{\PYZcb{}}
+\PY{n}{curve\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{name}\PY{p}{,} \PY{n}{model} \PY{o+ow}{in} \PY{n}{ensembles}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{k}{for} \PY{n}{size} \PY{o+ow}{in} \PY{n}{ensemble\PYZus{}sizes}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Нові дерева додаються до того самого ансамблю; старі залишаються.}
+        \PY{n}{model}\PY{o}{.}\PY{n}{set\PYZus{}params}\PY{p}{(}\PY{n}{n\PYZus{}estimators}\PY{o}{=}\PY{n}{size}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+        \PY{n}{curve\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Модель}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{name}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Дерев}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{size}\PY{p}{,}
+                           \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Навчальна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+                           \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Валідаційна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}valid}\PY{p}{)}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{curves} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{curve\PYZus{}rows}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Описовий критерій плато: не більш ніж на 1\PYZpc{} вище MSE при 200 деревах.}
+\PY{n}{plateau\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{name}\PY{p}{,} \PY{n}{group} \PY{o+ow}{in} \PY{n}{curves}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Модель}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{sort}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{p}{:}
+    \PY{n}{mse} \PY{o}{=} \PY{n}{group}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Валідаційна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}
+    \PY{n}{acceptable} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{all}\PY{p}{(}\PY{n}{mse}\PY{p}{[}\PY{n}{i}\PY{p}{:}\PY{p}{]} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mf}{1.01} \PY{o}{*} \PY{n}{mse}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{mse}\PY{p}{)}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+    \PY{n}{plateau\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Модель}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{name}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Початок плато на сітці}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{group}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Дерев}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{p}{)}\PY{p}{[}\PY{n}{acceptable}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,}
+                         \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MSE при 200 деревах, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mse}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

@@ -1,0 +1,18 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{c+c1}{\PYZsh{} П\PYZsq{}ять будинків із валідаційної частини, що не брали участі у відборі моделі.}
+\PY{n}{sample\PYZus{}index} \PY{o}{=} \PY{n}{raw\PYZus{}valid}\PY{o}{.}\PY{n}{sample}\PY{p}{(}\PY{n}{n}\PY{o}{=}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{n}{SEED}\PY{p}{)}\PY{o}{.}\PY{n}{index}
+\PY{n}{sample\PYZus{}design} \PY{o}{=} \PY{n}{Z\PYZus{}valid}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+} \PY{n}{selected}\PY{p}{]}
+\PY{n}{sample\PYZus{}probabilities} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{sample\PYZus{}design}\PY{p}{)}
+\PY{n}{sample\PYZus{}results} \PY{o}{=} \PY{n}{df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{,} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Order}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{SalePrice}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{n}{sample\PYZus{}results}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Фактичний клас}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{y\PYZus{}valid}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{sample\PYZus{}index}\PY{p}{]}
+\PY{n}{sample\PYZus{}results}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{P(Y=1)}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{sample\PYZus{}probabilities}
+\PY{n}{sample\PYZus{}results}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Клас за порогом 0.5}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{sample\PYZus{}probabilities} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mf}{0.5}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+\PY{n}{first\PYZus{}index} \PY{o}{=} \PY{n}{sample\PYZus{}index}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{first\PYZus{}values} \PY{o}{=} \PY{n}{raw\PYZus{}valid}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{first\PYZus{}index}\PY{p}{,} \PY{n}{selected}\PY{p}{]}
+\PY{n}{terms} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Значення ознаки}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{first\PYZus{}values}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Коефіцієнт}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{beta\PYZus{}raw}\PY{p}{,}
+                      \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Добуток}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{first\PYZus{}values} \PY{o}{*} \PY{n}{beta\PYZus{}raw}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{n}{z\PYZus{}first} \PY{o}{=} \PY{n}{intercept\PYZus{}raw} \PY{o}{+} \PY{n}{terms}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Добуток}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Ймовірність за формулою:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{expit}\PY{p}{(}\PY{n}{z\PYZus{}first}\PY{p}{)}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

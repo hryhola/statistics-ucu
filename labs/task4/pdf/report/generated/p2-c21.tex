@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{t} \PY{o}{=} \PY{n}{tree}\PY{o}{.}\PY{n}{tree\PYZus{}}
+\PY{n}{left}\PY{p}{,} \PY{n}{right} \PY{o}{=} \PY{n}{t}\PY{o}{.}\PY{n}{children\PYZus{}left}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{t}\PY{o}{.}\PY{n}{children\PYZus{}right}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{N}\PY{p}{,} \PY{n}{NL}\PY{p}{,} \PY{n}{NR} \PY{o}{=} \PY{n}{t}\PY{o}{.}\PY{n}{weighted\PYZus{}n\PYZus{}node\PYZus{}samples}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{left}\PY{p}{,} \PY{n}{right}\PY{p}{]}\PY{p}{]}
+\PY{n}{I}\PY{p}{,} \PY{n}{IL}\PY{p}{,} \PY{n}{IR} \PY{o}{=} \PY{n}{t}\PY{o}{.}\PY{n}{impurity}\PY{p}{[}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{n}{left}\PY{p}{,} \PY{n}{right}\PY{p}{]}\PY{p}{]}
+\PY{n}{improvement} \PY{o}{=} \PY{n}{I} \PY{o}{\PYZhy{}} \PY{n}{NL} \PY{o}{/} \PY{n}{N} \PY{o}{*} \PY{n}{IL} \PY{o}{\PYZhy{}} \PY{n}{NR} \PY{o}{/} \PY{n}{N} \PY{o}{*} \PY{n}{IR}
+\PY{n}{root\PYZus{}feature} \PY{o}{=} \PY{n}{feature\PYZus{}names}\PY{p}{[}\PY{n}{t}\PY{o}{.}\PY{n}{feature}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
+\PY{n}{root\PYZus{}threshold} \PY{o}{=} \PY{n}{shown\PYZus{}tree}\PY{o}{.}\PY{n}{tree\PYZus{}}\PY{o}{.}\PY{n}{threshold}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Незалежна перевірка без використання збережених impurity дочірніх вузлів.}
+\PY{n}{mask} \PY{o}{=} \PY{n}{Z\PYZus{}train}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{n}{t}\PY{o}{.}\PY{n}{feature}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{t}\PY{o}{.}\PY{n}{threshold}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{n}{root\PYZus{}rss} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}train} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}train}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}
+\PY{n}{children\PYZus{}rss} \PY{o}{=} \PY{n+nb}{sum}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{group} \PY{o}{\PYZhy{}} \PY{n}{group}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)} \PY{k}{for} \PY{n}{group} \PY{o+ow}{in} \PY{p}{[}\PY{n}{y\PYZus{}train}\PY{p}{[}\PY{n}{mask}\PY{p}{]}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{[}\PY{o}{\PYZti{}}\PY{n}{mask}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

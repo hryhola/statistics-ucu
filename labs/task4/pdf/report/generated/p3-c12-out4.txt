@@ -1,0 +1,1 @@
+Відібрані, але незначущі на рівні 0.05: ['BsmtHalfBath', 'GarageCars', 'GarageArea', 'EnclosedPorch', 'YrSold']

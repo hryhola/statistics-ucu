@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{valid\PYZus{}probabilities} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}valid}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{const}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{+} \PY{n}{selected}\PY{p}{]}\PY{p}{)}
+\PY{k}{def}\PY{+w}{ }\PY{n+nf}{threshold\PYZus{}metrics}\PY{p}{(}\PY{n}{threshold}\PY{p}{)}\PY{p}{:}
+    \PY{n}{predicted} \PY{o}{=} \PY{p}{(}\PY{n}{valid\PYZus{}probabilities} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{threshold}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{int}\PY{p}{)}
+    \PY{n}{matrix} \PY{o}{=} \PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{predicted}\PY{p}{,} \PY{n}{labels}\PY{o}{=}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+    \PY{n}{tn}\PY{p}{,} \PY{n}{fp}\PY{p}{,} \PY{n}{fn}\PY{p}{,} \PY{n}{tp} \PY{o}{=} \PY{n}{matrix}\PY{o}{.}\PY{n}{ravel}\PY{p}{(}\PY{p}{)}
+    \PY{n}{metrics} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Поріг}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{threshold}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TN}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tn}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{FP}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{fp}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{FN}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{fn}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TP}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tp}\PY{p}{,}
+               \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Чутливість}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tp} \PY{o}{/} \PY{p}{(}\PY{n}{tp} \PY{o}{+} \PY{n}{fn}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Специфічність}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{tn} \PY{o}{/} \PY{p}{(}\PY{n}{tn} \PY{o}{+} \PY{n}{fp}\PY{p}{)}\PY{p}{,}
+               \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Accuracy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{p}{(}\PY{n}{tp} \PY{o}{+} \PY{n}{tn}\PY{p}{)} \PY{o}{/} \PY{n}{matrix}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Прогнозів класу 1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{predicted}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{\PYZcb{}}
+    \PY{k}{return} \PY{n}{matrix}\PY{p}{,} \PY{n}{metrics}
+\PY{n}{matrix\PYZus{}default}\PY{p}{,} \PY{n}{metrics\PYZus{}default} \PY{o}{=} \PY{n}{threshold\PYZus{}metrics}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

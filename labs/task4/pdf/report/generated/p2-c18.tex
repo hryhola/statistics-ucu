@@ -1,0 +1,15 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{c+c1}{\PYZsh{} Прогноз: збільшення штрафу зменшить дерево; за дуже великого лишиться один листок.}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Прогноз: зі зростанням ccp\PYZus{}alpha кількість листків не збільшується.}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{pruning\PYZus{}path} \PY{o}{=} \PY{n}{tree}\PY{o}{.}\PY{n}{cost\PYZus{}complexity\PYZus{}pruning\PYZus{}path}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+\PY{n}{pruning\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{alpha} \PY{o+ow}{in} \PY{n}{pruning\PYZus{}path}\PY{o}{.}\PY{n}{ccp\PYZus{}alphas}\PY{p}{:}
+    \PY{n}{model} \PY{o}{=} \PY{n}{clone}\PY{p}{(}\PY{n}{tree}\PY{p}{)}\PY{o}{.}\PY{n}{set\PYZus{}params}\PY{p}{(}\PY{n}{ccp\PYZus{}alpha}\PY{o}{=}\PY{n+nb}{float}\PY{p}{(}\PY{n}{alpha}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+    \PY{n}{pruning\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ccp\PYZus{}alpha}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{alpha}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Листків}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}n\PYZus{}leaves}\PY{p}{(}\PY{p}{)}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Глибина}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{model}\PY{o}{.}\PY{n}{get\PYZus{}depth}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Навчальна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}train}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Валідаційна MSE, дол.\PYZca{}2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{mean\PYZus{}squared\PYZus{}error}\PY{p}{(}\PY{n}{y\PYZus{}valid}\PY{p}{,} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{Z\PYZus{}valid}\PY{p}{)}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

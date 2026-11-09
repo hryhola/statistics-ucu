@@ -1,0 +1,47 @@
+Оцінених моделей зі збіжністю: 253
+Відібрані ознаки: ['LotFrontage', 'LotArea', 'OverallQual', 'OverallCond', 'YearBuilt', 'YearRemodAdd', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', '1stFlrSF', '2ndFlrSF', 'BsmtFullBath', 'BsmtHalfBath', 'FullBath', 'HalfBath', 'KitchenAbvGr', 'Fireplaces', 'GarageCars', 'GarageArea', 'WoodDeckSF', 'EnclosedPorch', 'ScreenPorch', 'PoolArea', 'YrSold']
+Найкращий AIC після ще одного вилучення: 963.4442696643245
+Фінальний AIC: 963.128015126287
+Summary: коефіцієнти для стандартизованих ознак.
+                           Logit Regression Results                           
+==============================================================================
+Dep. Variable:            Above130000   No. Observations:                 2344
+Model:                          Logit   Df Residuals:                     2319
+Method:                           MLE   Df Model:                           24
+Date:                Mon, 09 Nov 2026   Pseudo R-squ.:                  0.6646
+Time:                        12:53:07   Log-Likelihood:                -456.56
+converged:                       True   LL-Null:                       -1361.3
+Covariance Type:            nonrobust   LLR p-value:                     0.000
+=================================================================================
+                    coef    std err          z      P>|z|      [0.025      0.975]
+---------------------------------------------------------------------------------
+const             4.1408      0.229     18.093      0.000       3.692       4.589
+LotFrontage       0.4373      0.142      3.089      0.002       0.160       0.715
+LotArea           0.6398      0.260      2.461      0.014       0.130       1.149
+OverallQual       1.1347      0.174      6.520      0.000       0.794       1.476
+OverallCond       0.8269      0.109      7.565      0.000       0.613       1.041
+YearBuilt         1.4924      0.167      8.922      0.000       1.165       1.820
+YearRemodAdd      0.3679      0.103      3.576      0.000       0.166       0.569
+BsmtFinSF1        1.1939      0.216      5.540      0.000       0.772       1.616
+BsmtFinSF2        0.3983      0.112      3.571      0.000       0.180       0.617
+BsmtUnfSF         0.8548      0.170      5.041      0.000       0.522       1.187
+1stFlrSF          1.5843      0.225      7.029      0.000       1.143       2.026
+2ndFlrSF          1.8117      0.219      8.264      0.000       1.382       2.241
+BsmtFullBath      0.4714      0.118      3.990      0.000       0.240       0.703
+BsmtHalfBath      0.1232      0.082      1.505      0.132      -0.037       0.284
+FullBath          0.3786      0.148      2.558      0.011       0.088       0.669
+HalfBath          0.2386      0.118      2.023      0.043       0.007       0.470
+KitchenAbvGr     -0.4876      0.088     -5.527      0.000      -0.660      -0.315
+Fireplaces        0.3998      0.109      3.682      0.000       0.187       0.613
+GarageCars        0.3209      0.200      1.607      0.108      -0.071       0.712
+GarageArea        0.3148      0.205      1.538      0.124      -0.086       0.716
+WoodDeckSF        0.2712      0.104      2.609      0.009       0.067       0.475
+EnclosedPorch     0.1693      0.091      1.855      0.064      -0.010       0.348
+ScreenPorch       0.4744      0.131      3.633      0.000       0.218       0.730
+PoolArea         -0.2107      0.095     -2.220      0.026      -0.397      -0.025
+YrSold           -0.1396      0.085     -1.646      0.100      -0.306       0.027
+=================================================================================
+
+Possibly complete quasi-separation: A fraction 0.20 of observations can be
+perfectly predicted. This might indicate that there is complete
+quasi-separation. In this case some parameters will not be identified.

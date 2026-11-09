@@ -1,0 +1,13 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Вище: імпорти, налаштування та підготовка змінних.}
+\PY{n}{lot\PYZus{}beta} \PY{o}{=} \PY{n}{beta\PYZus{}raw}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{lot\PYZus{}ci} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{conf\PYZus{}int}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{/} \PY{n}{scales}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{LotArea}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{n}{lot\PYZus{}rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{increase} \PY{o+ow}{in} \PY{p}{[}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1000}\PY{p}{]}\PY{p}{:}
+    \PY{n}{odds\PYZus{}ratio} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{increase} \PY{o}{*} \PY{n}{lot\PYZus{}beta}\PY{p}{)}
+    \PY{n}{lot\PYZus{}rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Приріст площі, кв. футів}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{increase}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{beta на 1 кв. фут}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{lot\PYZus{}beta}\PY{p}{,}
+                     \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Відношення шансів}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{odds\PYZus{}ratio}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Зміна шансів, }\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{100} \PY{o}{*} \PY{p}{(}\PY{n}{odds\PYZus{}ratio} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,}
+                     \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Нижня межа OR, 95}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{increase} \PY{o}{*} \PY{n}{lot\PYZus{}ci}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+                     \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Верхня межа OR, 95}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{np}\PY{o}{.}\PY{n}{exp}\PY{p}{(}\PY{n}{increase} \PY{o}{*} \PY{n}{lot\PYZus{}ci}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{\PYZcb{}}\PY{p}{)}
+\PY{c+c1}{\PYZsh{} Далі: таблиці, графіки й перевірки; фактичні виводи наведено нижче.}
+\end{Verbatim}

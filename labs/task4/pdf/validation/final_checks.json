@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-09",
+  "pages": 34,
+  "code_listings": 19,
+  "output_tables": 34,
+  "shortened_tables": 4,
+  "figures": 9,
+  "required_subtasks": 19,
+  "notebook_hashes_match": true,
+  "statements_match_notebooks": true,
+  "shown_table_numbers_present": true,
+  "figure_bytes_match_notebooks": true,
+  "optional_note_occurs_once": true,
+  "tex_errors_overfull_missing_glyphs": false,
+  "pdf_sha256": "7eeec1db506868909a57208f10a123a4fa8e82c70ed13e63948c87411cfec634"
+}
